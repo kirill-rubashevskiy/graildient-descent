@@ -1,0 +1,90 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+
+# Packages and virtual environments
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Poetry
+*.lock
+.pdm.toml
+poetry.lock
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+.installed.cfg
+.eggs/
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+.coverage.json
+nosetests.xml
+coverage.xml
+
+# Pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# VS Code settings
+.vscode/
+
+# IDE settings
+.idea/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Data and models
+data/
+models/
+
+# Streamlit cache
+.streamlit/
+
+# FastAPI static files
+fastapi_app/static/
+
+# Logs and databases
+*.log
+*.db
+*.sqlite
+
+# Weights & Biases
+wandb/
+.wandb/
+sweeps/
+
+# System files
+.DS_Store
+Thumbs.db
+
+
+# Generated files
+*.pkl
+*.joblib
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.swp
+
+# CatBoost cache
+catboost_info/

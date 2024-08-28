@@ -1,0 +1,85 @@
+[tool.poetry]
+name = "graildient-descent"
+version = "0.1.0"
+description = "A  machine learning project to predict sold prices of items on Grailed."
+authors = ["Kirill Rubashevskiy <kirill.rubashevskiy@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pandas = "^2.2.2"
+scikit-learn = "^1.5.1"
+gensim = "^4.3.3"
+nltk = "^3.8.2"
+category-encoders = "^2.6.3"
+catboost = "^1.2.5"
+pyldavis = "^3.4.1"
+tqdm = "^4.66.4"
+fire = "^0.6.0"
+mergedeep = "^1.3.4"
+boto3 = "^1.34.150"
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
+pre-commit = "^3.8.0"
+black = "^23.9b0"
+isort = "^5.12.0"
+pytest = "^8.3.2"
+coverage = "^7.6.1"
+
+[tool.poetry.group.web.dependencies]
+fastapi = {extras = ["standard"], version = "^0.112.1"}
+streamlit = "^1.37.1"
+streamlit-tags = "^1.2.8"
+altair = "^5.3.0"
+
+[tool.poetry.group.scraper.dependencies]
+selenium = "^4.22.0"
+bs4 = "^0.0.2"
+fake-useragent = "^1.5.1"
+
+[tool.coverage.run]
+source = ["fastapi_app", "graildient", "tests", "scraper"]
+omit = ["*/__init__.py", "*/migrations/*", "*/tests/*"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "def __str__",
+    "raise NotImplementedError"
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[tool.isort]
+profile = "black"
+line_length = 88
+lines_after_imports = 2
+
+[tool.nbqa.config]
+black = "pyproject.toml"
+flake8 = ".flake8"
+isort = "pyproject.toml"
+
+[tool.nbqa.mutate]
+black = 1
+flake8 = 1
+isort = 1
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
