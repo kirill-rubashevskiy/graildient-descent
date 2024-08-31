@@ -17,10 +17,9 @@ The project is organized into the following main components (some of which are s
 under development):
 
 - **graildient_descent/**: The core machine learning pipeline and related modules.
-- **data_collection/**: Contains the scraping scripts and utilities to collect data from
-  Grailed.
-- **airflow/**: (To be added) Will contain the ETL pipeline scripts and configurations
-  for Apache Airflow.
+- **data_collection/**: Contains the scraping scripts and utilities to collect and clean
+  data from Grailed.
+- **airflow/**: Contains the ETL pipeline scripts for Apache Airflow.
 - **streamlit_app/**: (To be developed) A Streamlit application to showcase the project
   and its predictions.
 - **fastapi_app/**: (To be developed) A FastAPI application for deploying the model as a
@@ -33,8 +32,7 @@ under development):
 
 - **Python 3.11**: Ensure you have Python 3.11 installed.
 - **Poetry**: The project uses Poetry for dependency management. If you haven't
-  installed Poetry, you can do so by
-- following the
+  installed Poetry, you can do so by following the
   [Poetry installation guide](https://python-poetry.org/docs/#installation).
 
 ### Installation
@@ -43,10 +41,10 @@ To set up the project, follow these steps:
 
 1. **Clone the repository**:
 
-   ```bash
-   git clone https://github.com/yourusername/graildient-descent.git
-   cd graildient-descent
-   ```
+```bash
+git clone https://github.com/yourusername/graildient-descent.git
+cd graildient-descent
+```
 
 2. **Install the dependencies and set up pre-commit hooks (for Contributors)**:
 
@@ -65,6 +63,8 @@ poetry run pre-commit install
 
 ## Scraper Usage
 
+<details>
+
 ### Overview
 
 The `GrailedScraper` is a Python class designed to scrape sold item listings from
@@ -72,14 +72,12 @@ The `GrailedScraper` is a Python class designed to scrape sold item listings fro
 descriptions, details, sold prices, and images, which are then used for further
 processing and analysis.
 
-### Configuration
+### Setup
 
-The scraper requires Grailed user credentials. Set these up as needed, typically through
-environment variables.
+Ensure your environment variables for Grailed credentials are set up, or pass them
+directly when initializing the `GrailedScraper`.
 
 ### Example Usage
-
-Here is an example of how to use the `GrailedScraper` in a Python script:
 
 ```python
 from data_collection.scraper import GrailedScraper
@@ -88,27 +86,108 @@ scraper = GrailedScraper(email='grailed_email', password='grailed_password')
 listings_data, cover_imgs, errors = scraper.scrape()
 ```
 
+### Notes
+
+Ensure you comply with Grailed’s [Terms of Service](https://www.grailed.com/about/terms)
+when scraping data.
+
+</details>
+
+## ETL Pipeline Usage
+
+<details>
+
+### Overview
+
+The ETL (Extract, Transform, Load) pipeline is designed to collect, process and manage
+data from the Grailed website. The pipeline is implemented using Apache Airflow and
+performs the following tasks:
+
+- **Extract**: Collect data from Grailed using the `GrailedScraper`.
+- **Transform**: Process and clean the collected data.
+- **Load**: Load the cleaned data into the target data storage.
+
+Refer to the Airflow documentation for more details on managing and configuring DAGs.
+
+### Setup
+
+1. **Install Dependencies**:
+
+   Ensure that you have all necessary dependencies installed. Run the following command
+   to install the required Python packages via Poetry:
+
+   ```bash
+   poetry install
+   ```
+
+2. **Install Apache Airflow**:
+
+   Apache Airflow must be installed using pip as Poetry installation is not supported by
+   Apache Airflow. Install Airflow with the following command:
+
+   ```bash
+   pip install apache-airflow
+   ```
+
+3. **Configure Airflow**:
+
+   Airflow requires a proper configuration. Set up your Airflow environment by
+   initializing the database and starting the web server and scheduler.
+
+   ```bash
+   airflow db init
+   airflow webserver
+   airflow scheduler
+   ```
+
+4. **Set Up Airflow Variables**:
+
+   Define any required Airflow variables (e.g., connection strings, paths) using the
+   Airflow UI or command line.
+
+### Running the ETL Pipeline
+
+1. **Start Airflow**:
+
+   ```bash
+   airflow webserver
+   airflow scheduler
+   ```
+
+2. **Trigger the DAG**:
+
+   ```bash
+   airflow dags trigger grailed_etl_dag
+   ```
+
+</details>
+
 ## Project Status
 
-The project has progressed beyond its initial setup phase. The following components have
-been implemented and are under development:
+The project has advanced significantly beyond its initial setup phase. The following
+components have been implemented and are actively being developed:
 
-- **Scraper**: The web scraper, `GrailedScraper`, has been implemented to collect data
-  from Grailed. It is capable of extracting sold item details such as names,
-  descriptions, details, sold prices, and images.
-- **Pipeline**: An ETL pipeline using Apache Airflow to process and clean the collected
-  data.
-- **Machine Learning Models**: Models to predict the sold prices of items based on
-  various features.
+- **Scraper**: The web scraper, `GrailedScraper`, is in place to collect data from
+  Grailed. It can extract details of sold items, including names, descriptions, details,
+  sold prices, and images.
+- **ETL Pipeline**: The ETL pipeline, now implemented using Apache Airflow, processes
+  and cleans the collected data. The pipeline includes the necessary components to
+  manage data extraction, transformation, and loading effectively.
+- **Machine Learning Models**: Models are being developed to predict the sold prices of
+  items based on various features.
 
 ## Roadmap
 
-- **Completed**: Implement the web scraper for Grailed sold listings.
+- **Completed**:
+
+  - Implemented the web scraper for Grailed sold listings.
+  - Developed and integrated the ETL pipeline using Apache Airflow.
+
 - **Next Steps**:
-  - Set up the Airflow ETL pipeline.
-  - Develop and train the machine learning models.
-  - Create a Streamlit application for model visualization.
-  - Deploy the model using FastAPI for real-time predictions.
+  - Perform Exploratory Data Analysis (EDA) to understand the data better.
+  - Develop and train machine learning models for price prediction.
+  - Build and deploy a Streamlit application for model visualization.
+  - Implement a FastAPI service for real-time predictions.
 
 ## Contributing
 
