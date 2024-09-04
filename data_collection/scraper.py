@@ -354,6 +354,7 @@ class GrailedScraper:
             self.uniform_sleep()
             listings_links = driver.find_elements(By.CLASS_NAME, "listing-item-link")
             scrolls_count += 1
+        listings_links = listings_links[:n_listings]
 
         return [link.get_attribute("href") for link in listings_links]
 
