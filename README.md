@@ -5,8 +5,8 @@
 **Graildient Descent** is a machine learning project focused on predicting the sold
 prices of items listed on [Grailed](https://www.grailed.com/), an online marketplace for
 high-end, pre-owned, and limited edition fashion. The project aims to build a
-comprehensive pipeline that includes data collection, preprocessing, and model training
-to make accurate sold price predictions based on various features.
+comprehensive pipeline that includes data collection, preprocessing, model training, and
+deployment to make accurate sold price predictions based on various features.
 
 This README provides a brief overview of the project and instructions on setting up the
 development environment.
@@ -20,8 +20,8 @@ under development):
 - **data_collection/**: Contains the scraping scripts and utilities to collect and clean
   data from Grailed.
 - **airflow/**: Contains the ETL pipeline scripts for Apache Airflow.
-- **streamlit_app/**: (To be developed) A Streamlit application to showcase the project
-  and its predictions.
+- **streamlit_app/**: A Streamlit application to showcase the project and its
+  predictions.
 - **fastapi_app/**: (To be developed) A FastAPI application for deploying the model as a
   service.
 - **tests/**: Contains unit tests for various project components.
@@ -42,7 +42,7 @@ To set up the project, follow these steps:
 1. **Clone the repository**:
 
 ```bash
-git clone https://github.com/yourusername/graildient-descent.git
+git clone https://github.com/kirill-rubashevskiy/graildient-descent.git
 cd graildient-descent
 ```
 
@@ -162,6 +162,23 @@ Refer to the Airflow documentation for more details on managing and configuring 
 
 </details>
 
+## Streamlit Application
+
+The **Streamlit App** allows users to explore the project's data analysis and prediction
+results interactively. It includes pages for EDA and sold price prediction.
+
+The app will be deployed on the Streamlit Community Hub, making it accessible to anyone
+at any time. Stay tuned for the link to the live app!
+
+### Pages:
+
+- **Intro**: Overview of the project and personal insights into Grailed.
+- **Data Collection**: Describes the scraping process, collected data, and the building
+  of the ETL pipeline (work in progress).
+- **EDA**: Explores the data through visualizations and statistics (work in progress).
+- **Predict**: Demonstrates the current model's prediction capabilities (work in
+  progress).
+
 ## Project Status
 
 The project has advanced significantly beyond its initial setup phase. The following
@@ -175,6 +192,8 @@ components have been implemented and are actively being developed:
   manage data extraction, transformation, and loading effectively.
 - **Machine Learning Models**: Models are being developed to predict the sold prices of
   items based on various features.
+- **Streamlit App**: The app is currently under development to showcase EDA results and
+  prediction functionalities.
 
 ## Roadmap
 
@@ -184,7 +203,7 @@ components have been implemented and are actively being developed:
   - Developed and integrated the ETL pipeline using Apache Airflow.
 
 - **Next Steps**:
-  - Perform Exploratory Data Analysis (EDA) to understand the data better.
+  - Continue refining Exploratory Data Analysis (EDA).
   - Develop and train machine learning models for price prediction.
   - Build and deploy a Streamlit application for model visualization.
   - Implement a FastAPI service for real-time predictions.
