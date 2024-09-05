@@ -20,8 +20,8 @@ under development):
 - **data_collection/**: Contains the scraping scripts and utilities to collect and clean
   data from Grailed.
 - **airflow/**: Contains the ETL pipeline scripts for Apache Airflow.
-- **streamlit_app/**: A Streamlit application to showcase the project and its
-  predictions.
+- **streamlit_app/**: A Streamlit application to showcase the project with pages for
+  EDA, data collection, and predictions.
 - **fastapi_app/**: (To be developed) A FastAPI application for deploying the model as a
   service.
 - **tests/**: Contains unit tests for various project components.
@@ -165,19 +165,22 @@ Refer to the Airflow documentation for more details on managing and configuring 
 ## Streamlit Application
 
 The **Streamlit App** allows users to explore the project's data analysis and prediction
-results interactively. It includes pages for EDA and sold price prediction.
-
-The app will be deployed on the Streamlit Community Hub, making it accessible to anyone
-at any time. Stay tuned for the link to the live app!
-
-### Pages:
+results interactively. It includes the following pages:
 
 - **Intro**: Overview of the project and personal insights into Grailed.
 - **Data Collection**: Describes the scraping process, collected data, and the building
   of the ETL pipeline (work in progress).
-- **EDA**: Explores the data through visualizations and statistics (work in progress).
+- **EDA**: Explores the data through visualizations and statistics. Currently, the EDA
+  page includes:
+  - **Numerical Features**: Sold price and photo count analysis.
+  - **Categorical Features**: Department, category, designer, size, and more.
+  - **Text Features**: Item name, description, and hashtags.
+  - **Images**: Planned for a future stage.
 - **Predict**: Demonstrates the current model's prediction capabilities (work in
   progress).
+
+The app will be deployed on the Streamlit Community Hub, making it accessible to anyone
+at any time.
 
 ## Project Status
 
@@ -190,8 +193,9 @@ components have been implemented and are actively being developed:
 - **ETL Pipeline**: The ETL pipeline, now implemented using Apache Airflow, processes
   and cleans the collected data. The pipeline includes the necessary components to
   manage data extraction, transformation, and loading effectively.
-- **Machine Learning Models**: Models are being developed to predict the sold prices of
-  items based on various features.
+- **Exploratory Data Analysis (EDA)**: A comprehensive analysis of tabular and text
+  features has been implemented. A section for image features is planned for future
+  stages.
 - **Streamlit App**: The app is currently under development to showcase EDA results and
   prediction functionalities.
 
@@ -201,9 +205,10 @@ components have been implemented and are actively being developed:
 
   - Implemented the web scraper for Grailed sold listings.
   - Developed and integrated the ETL pipeline using Apache Airflow.
+  - Initial Exploratory Data Analysis (EDA) completed for tabular and text features.
 
 - **Next Steps**:
-  - Continue refining Exploratory Data Analysis (EDA).
+  - Finalize and enhance EDA, especially for image features.
   - Develop and train machine learning models for price prediction.
   - Build and deploy a Streamlit application for model visualization.
   - Implement a FastAPI service for real-time predictions.
