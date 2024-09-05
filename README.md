@@ -6,10 +6,18 @@
 prices of items listed on [Grailed](https://www.grailed.com/), an online marketplace for
 high-end, pre-owned, and limited edition fashion. The project aims to build a
 comprehensive pipeline that includes data collection, preprocessing, model training, and
-deployment to make accurate sold price predictions based on various features.
+deployment.
 
-This README provides a brief overview of the project and instructions on setting up the
-development environment.
+You can explore the project’s interactive results on the
+[Streamlit App](https://graildient-descent.streamlit.app).
+
+### Multimodal Data
+
+This project works with multimodal data:
+
+- **Tabular Features**: Item attributes like brand, category, and size.
+- **Text Features**: Descriptions, titles of items, and hashtags.
+- **Images**: Collected cover images of items (future work in progress).
 
 ## Project Structure
 
@@ -179,8 +187,8 @@ results interactively. It includes the following pages:
 - **Predict**: Demonstrates the current model's prediction capabilities (work in
   progress).
 
-The app will be deployed on the Streamlit Community Hub, making it accessible to anyone
-at any time.
+The app is deployed on the Streamlit Community Hub, and you can explore it
+[here](https://graildient-descent.streamlit.app).
 
 ## Project Status
 
