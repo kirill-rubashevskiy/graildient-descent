@@ -28,6 +28,8 @@ isort = "^5.12.0"
 pytest = "^8.3.2"
 coverage = "^7.6.1"
 pytest-mock = "^3.14.0"
+moto = "^5.0.13"
+wandb = "^0.18.0"
 
 [tool.poetry.group.web.dependencies]
 fastapi = {extras = ["standard"], version = "^0.112.1"}
@@ -41,7 +43,7 @@ bs4 = "^0.0.2"
 fake-useragent = "^1.5.1"
 
 [tool.coverage.run]
-source = ["airflow/dags/", "fastapi_app", "graildient_descent", "tests", "data_collection"]
+source = ["airflow/dags/", "graildient_descent", "tests", "data_collection"]
 omit = ["*/__init__.py", "*/migrations/*", "*/tests/*"]
 branch = true
 
