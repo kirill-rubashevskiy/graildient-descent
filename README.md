@@ -24,7 +24,12 @@ This project works with multimodal data:
 The project is organized into the following main components (some of which are still
 under development):
 
-- **graildient_descent/**: The core machine learning pipeline and related modules.
+- **graildient_descent/**: Contains the core machine learning pipeline, including:
+  - `experiment.py`: Script to run machine learning experiments.
+  - `model.py`: Model definition and related logic.
+  - `preprocessing.py`: Data preprocessing steps and utilities.
+  - `feature_extraction.py`: Text feature extraction utilities.
+  - `utils.py`: Helper functions used across the project.
 - **data_collection/**: Contains the scraping scripts and utilities to collect and clean
   data from Grailed.
 - **airflow/**: Contains the ETL pipeline scripts for Apache Airflow.
@@ -170,6 +175,47 @@ Refer to the Airflow documentation for more details on managing and configuring 
 
 </details>
 
+## Running ML Experiments
+
+You can run machine learning experiments either as single runs or as multiple runs using
+Weights & Biases (wandb) sweeps.
+
+### Single Experiment Run
+
+To run a single experiment with custom arguments, use the following command:
+
+```bash
+python3 -m fire graildient_descent/experiment.py run_experiment --arg1 value1 --arg2 value2
+```
+
+Replace --arg1, --arg2, etc., with actual arguments and their values specific to the
+experiment configuration.
+
+### Running Multiple Experiments with Wandb Sweeps
+
+For running multiple experiments using Weights & Biases (wandb) sweeps, configure your
+sweep in the wandb sweep configuration file, then initiate the sweep:
+
+1. **Create a Sweep**:
+
+   First, define your sweep configuration (e.g., in sweeps/config.yaml).
+
+2. **Run the Sweep**:
+
+   Start the sweep using:
+
+   ```bash
+   wandb sweep sweeps/config.yaml
+   ```
+
+3. **Launch Agents**:
+
+   After starting the sweep, you can launch multiple agents to run the experiments:
+
+   ```bash
+   PYTHONPATH=. wandb agent <sweep_id>
+   ```
+
 ## Streamlit Application
 
 The **Streamlit App** allows users to explore the project's data analysis and prediction
@@ -204,6 +250,8 @@ components have been implemented and are actively being developed:
 - **Exploratory Data Analysis (EDA)**: A comprehensive analysis of tabular and text
   features has been implemented. A section for image features is planned for future
   stages.
+- **ML Experiments**: The machine learning experiments have been set up with necessary
+  configurations, preprocessing, and feature extraction.
 - **Streamlit App**: The app is currently under development to showcase EDA results and
   prediction functionalities.
 
@@ -214,6 +262,8 @@ components have been implemented and are actively being developed:
   - Implemented the web scraper for Grailed sold listings.
   - Developed and integrated the ETL pipeline using Apache Airflow.
   - Initial Exploratory Data Analysis (EDA) completed for tabular and text features.
+  - Machine learning experiment setup, including configurations, preprocessing, and
+    feature extraction.
 
 - **Next Steps**:
   - Finalize and enhance EDA, especially for image features.

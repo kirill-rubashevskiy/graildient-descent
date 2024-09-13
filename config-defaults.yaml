@@ -1,0 +1,10 @@
+train_dataset:
+  value: train_10k.csv
+eval_dataset:
+  value: eval_10k.csv
+use_tab_features:
+  value: True
+use_text_features:
+  value: False
+estimator_class:
+  value: lr
