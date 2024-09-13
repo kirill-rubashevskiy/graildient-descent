@@ -49,8 +49,8 @@ class TestTextFeatureExtractor:
         extractor.fit(sample_data)
         transformed = extractor.transform(sample_data)
 
-        # Calculate expected number of output columns (2 stats + 2 PCA components per text column)
-        expected_num_columns = len(extractor.get_params()["text_cols"]) * 4
+        # Calculate expected number of output columns (5 stats + 2 PCA components per text column)
+        expected_num_columns = len(extractor.get_params()["text_cols"]) * 5
 
         assert isinstance(transformed, pd.DataFrame)
         assert transformed.shape == (sample_data.shape[0], expected_num_columns)
@@ -103,7 +103,7 @@ class TestTextFeatureExtractor:
         extractor.fit(sample_data)
         transformed = extractor.transform(sample_data)
 
-        assert transformed.shape == (sample_data.shape[0], len(extractor.text_cols) * 2)
+        assert transformed.shape == (sample_data.shape[0], len(extractor.text_cols) * 3)
 
     @pytest.mark.parametrize(
         "text_cols",
@@ -114,8 +114,8 @@ class TestTextFeatureExtractor:
         extractor.fit(sample_data)
         transformed = extractor.transform(sample_data)
 
-        # Calculate expected number of output columns (2 stats + 2 PCA components per text column)
-        expected_num_columns = len(extractor.get_params()["text_cols"]) * 4
+        # Calculate expected number of output columns (3 stats + 2 PCA components per text column)
+        expected_num_columns = len(extractor.get_params()["text_cols"]) * 5
 
         assert isinstance(transformed, pd.DataFrame)
         assert transformed.shape == (sample_data.shape[0], expected_num_columns)
