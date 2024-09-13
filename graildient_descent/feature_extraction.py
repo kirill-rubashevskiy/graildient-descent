@@ -34,12 +34,16 @@ class TextStatsExtractor(BaseEstimator, TransformerMixin):
         Returns:
             A dictionary containing text statistics.
         """
-        if isinstance(text, str) and text != "none":
-            return {"length": len(text), "num_words": len(text.split())}
-        return {"length": 0, "num_words": 0}
+        if isinstance(text, str) and text != "missing":
+            return {
+                "length": len(text),
+                "num_words": len(text.split()),
+                "avg_word_length": len(text) / len(text.split()),
+            }
+        return {"length": 0, "num_words": 0, "avg_word_length": 0}
 
     def get_feature_names_out(self, input_features=None):
-        return ["length", "num_words"]
+        return ["length", "num_words", "avg_word_length"]
 
 
 class ListTransformer(TransformerMixin):
