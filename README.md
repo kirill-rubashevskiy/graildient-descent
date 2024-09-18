@@ -262,13 +262,14 @@ components have been implemented and are actively being developed:
   - Implemented the web scraper for Grailed sold listings.
   - Developed and integrated the ETL pipeline using Apache Airflow.
   - Initial Exploratory Data Analysis (EDA) completed for tabular and text features.
+  - Developed and deployed a Streamlit app showcasing the EDA and data collection
+    process.
   - Machine learning experiment setup, including configurations, preprocessing, and
     feature extraction.
 
 - **Next Steps**:
   - Finalize and enhance EDA, especially for image features.
   - Develop and train machine learning models for price prediction.
-  - Build and deploy a Streamlit application for model visualization.
   - Implement a FastAPI service for real-time predictions.
 
 ## Contributing
