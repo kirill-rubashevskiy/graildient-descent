@@ -49,8 +49,9 @@ class TestTextFeatureExtractor:
         extractor.fit(sample_data)
         transformed = extractor.transform(sample_data)
 
-        # Calculate expected number of output columns (5 stats + 2 PCA components per text column)
-        expected_num_columns = len(extractor.get_params()["text_cols"]) * 5
+        # Calculate expected number of output columns
+        # (3 stats + 2 PCA components per text column + sentiment + is_hashtags_missing)
+        expected_num_columns = len(extractor.get_params()["text_cols"]) * 5 + 2
 
         assert isinstance(transformed, pd.DataFrame)
         assert transformed.shape == (sample_data.shape[0], expected_num_columns)
@@ -93,13 +94,20 @@ class TestTextFeatureExtractor:
         assert params["item_name_vectorizer_params"]["ngram_range"] == (1, 1)
 
     def test_embeddings_as_list(self, extractor, sample_data):
-        extractor.set_params(use_stats=False, return_embeddings_as_list=True)
+        extractor.set_params(
+            use_stats=False,
+            use_sentiment=False,
+            use_missing_hashtags=False,
+            return_embeddings_as_list=True,
+        )
         extractor.fit(sample_data)
         transformed = extractor.transform(sample_data)
         assert transformed.shape == (sample_data.shape[0], len(extractor.text_cols))
 
     def test_stats_only(self, sample_data):
-        extractor = TextFeatureExtractor(use_embeddings=False)
+        extractor = TextFeatureExtractor(
+            use_embeddings=False, use_sentiment=False, use_missing_hashtags=False
+        )
         extractor.fit(sample_data)
         transformed = extractor.transform(sample_data)
 
@@ -110,7 +118,9 @@ class TestTextFeatureExtractor:
         [["item_name"], ["description"], ["hashtags"], ["item_name", "description"]],
     )
     def test_text_cols(self, text_cols, extractor, sample_data):
-        extractor.set_params(text_cols=text_cols)
+        extractor.set_params(
+            text_cols=text_cols, use_sentiment=False, use_missing_hashtags=False
+        )
         extractor.fit(sample_data)
         transformed = extractor.transform(sample_data)
 

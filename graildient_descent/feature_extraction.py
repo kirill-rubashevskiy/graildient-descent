@@ -1,4 +1,5 @@
 import pandas as pd
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.decomposition import PCA
@@ -46,6 +47,46 @@ class TextStatsExtractor(BaseEstimator, TransformerMixin):
         return ["length", "num_words", "avg_word_length"]
 
 
+class SentimentExtractor(BaseEstimator, TransformerMixin):
+    """
+    Extracts a sentiment score from the input text using the VADER sentiment analyzer.
+    """
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        return pd.DataFrame([[self._get_sentiment(text)] for text in X])
+
+    @staticmethod
+    def _get_sentiment(text: str) -> float:
+        if isinstance(text, str) and text != "missing":
+            return SentimentIntensityAnalyzer().polarity_scores(text)["compound"]
+        return 0.0
+
+    def get_feature_names_out(self, input_features=None):
+        return ["sentiment_score"]
+
+
+class MissingHashtagsExtractor(BaseEstimator, TransformerMixin):
+    """
+    Creates a binary feature indicating if the 'hashtags' column has the value 'missing'.
+    """
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        return pd.DataFrame([[self._is_missing(text)] for text in X])
+
+    @staticmethod
+    def _is_missing(text: str) -> int:
+        return 1 if text == "missing" else 0
+
+    def get_feature_names_out(self, input_features=None):
+        return ["is_hashtags_missing"]
+
+
 class ListTransformer(TransformerMixin):
     """
     Custom transformer to convert array output into a list.
@@ -68,6 +109,8 @@ class TextFeatureExtractor(BaseEstimator, TransformerMixin):
         text_cols: list[str] = ("item_name", "description", "hashtags"),
         use_stats: bool = True,
         use_embeddings: bool = True,
+        use_sentiment: bool = True,
+        use_missing_hashtags: bool = True,
         item_name_vectorizer_class: str = "count",
         item_name_vectorizer_params: dict = None,
         item_name_pca_n_components: int = 100,
@@ -86,6 +129,14 @@ class TextFeatureExtractor(BaseEstimator, TransformerMixin):
             text_cols: List of text columns to process.
             use_stats: Whether to include text statistics in the output.
             use_embeddings: Whether to include text embeddings (with PCA) in the output.
+            use_sentiment: Extracts a sentiment score from the 'description' text column.
+                           The sentiment score is computed using the VADER sentiment analyzer,
+                           and it measures the polarity of the text, ranging from -1
+                           (negative) to 1 (positive).
+            use_missing_hashtags: Creates a binary feature indicating whether the 'hashtags'
+                                  column is marked as 'missing'. If the 'hashtags' value
+                                  is 'missing', the feature is set to 1; otherwise, it
+                                  is set to 0.
             item_name_vectorizer_class: Vectorizer class for the 'item_name' column.
             item_name_vectorizer_params: Parameters for the vectorizer for 'item_name'.
             item_name_pca_n_components: Number of PCA components for 'item_name' embeddings.
@@ -100,6 +151,8 @@ class TextFeatureExtractor(BaseEstimator, TransformerMixin):
         self.text_cols = text_cols
         self.use_stats = use_stats
         self.use_embeddings = use_embeddings
+        self.use_sentiment = use_sentiment
+        self.use_missing_hashtags = use_missing_hashtags
         self.item_name_vectorizer_class = item_name_vectorizer_class
         self.item_name_vectorizer_params = item_name_vectorizer_params or {
             "ngram_range": (1, 1),
@@ -220,6 +273,18 @@ class TextFeatureExtractor(BaseEstimator, TransformerMixin):
             for text_col in self.text_cols:
                 transformers.append(
                     (f"{text_col}_stats", self._create_stats_pipeline(), text_col)
+                )
+
+        if self.use_sentiment:
+            if "description" in self.text_cols:
+                transformers.append(
+                    ("description_sentiment", SentimentExtractor(), "description")
+                )
+
+        if self.use_missing_hashtags:
+            if "hashtags" in self.text_cols:
+                transformers.append(
+                    ("is_hashtags_missing", MissingHashtagsExtractor(), "hashtags")
                 )
 
         return ColumnTransformer(transformers=transformers, remainder="drop")
