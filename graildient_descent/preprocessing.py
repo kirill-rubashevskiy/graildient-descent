@@ -33,7 +33,7 @@ def preprocess_text(text, placeholder="missing"):
     words = [
         lemmatizer.lemmatize(word)
         for word in words
-        if word.isalpha() and word not in stop_words
+        if word.isalnum() and word not in stop_words
     ]
     processed_text = " ".join(words)
 
