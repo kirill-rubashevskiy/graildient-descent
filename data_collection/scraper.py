@@ -183,7 +183,7 @@ class GrailedScraper:
     @staticmethod
     def _collect_cover_images(driver, n_listings: int) -> list[str]:
         """
-        Collect cover image links from the listings.
+        Collect cover image links.
 
         :param driver: The Selenium WebDriver instance.
         :param n_listings: The number of listings to collect.
