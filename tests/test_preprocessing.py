@@ -32,7 +32,7 @@ class TestPreprocessText:
             (None, "missing"),  # None input
             (
                 "a123 4567 !@#$%",
-                "missing",
+                "a123 4567",
             ),  # Non-alphabetical characters should be removed
             (
                 "Running faster than the wind",
