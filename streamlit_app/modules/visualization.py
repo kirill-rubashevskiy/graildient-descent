@@ -132,7 +132,7 @@ def draw_quantile_chart(
     )
 
     right = base.encode(
-        x=alt.X("mean:Q", axis=right_xaxis).scale(type="log"),
+        x=alt.X("mean:Q", axis=right_xaxis),
         color=alt.value("#76b7b2"),
     )
 
@@ -162,14 +162,14 @@ def draw_quantile_charts(
         feature,
         alt.datum.sold_price > q_high,
         xaxis=False,
-        yaxis_title=f"Top {q_high:.0%} Listings",
+        yaxis_title="Top 25% Listings",
     )
 
     bottom_left, bottom_middle, bottom_right = draw_quantile_chart(
         data,
         feature,
         alt.datum.sold_price < q_low,
-        yaxis_title=f"Bottom {q_low:.0%} Listings",
+        yaxis_title="Bottom 25% Listings",
     )
 
     return (
