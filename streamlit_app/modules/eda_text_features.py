@@ -174,9 +174,7 @@ def display_text_features(data, text_stats, text_ngrams, text_sentiment, q_low, 
     )
 
     top_right = top.encode(
-        x=alt.X("mean:Q")
-        .axis(title=None, labels=False, format="$.0f")
-        .scale(type="log"),
+        x=alt.X("mean:Q").axis(title=None, labels=False, format="$.0f"),
         color=alt.value("#76b7b2"),
     )
 
@@ -212,9 +210,7 @@ def display_text_features(data, text_stats, text_ngrams, text_sentiment, q_low, 
     )
 
     bottom_right = bottom.encode(
-        x=alt.X("mean:Q")
-        .axis(title="Average Sold Price", format="$.0f")
-        .scale(type="log"),
+        x=alt.X("mean:Q").axis(title="Average Sold Price", format="$.0f"),
         color=alt.value("#76b7b2"),
     )
 
