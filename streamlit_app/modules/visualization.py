@@ -287,3 +287,29 @@ def draw_interactive_distribution_price_chart(
         alt.hconcat(left | middle | right, spacing=0).configure_title(anchor="middle"),
         use_container_width=True,
     )
+
+
+def draw_price_kde_chart(data: pd.DataFrame) -> alt.Chart:
+    """
+    Draw a Kernel Density Estimation (KDE) chart to visualize the distribution of
+    sold prices across different data splits.
+
+    Parameters:
+    data: The DataFrame containing the data to plot, with 'sold_price' as the numerical
+    feature and 'dataset' as the categorical feature indicating data splits (e.g., train, eval, test).
+
+    Returns:
+    An Altair chart object representing the KDE of sold prices, with separate density
+    curves for each dataset category.
+    """
+    chart = (
+        alt.Chart(data)
+        .transform_density(
+            "sold_price", as_=["sold_price", "density"], groupby=["dataset"]
+        )
+        .mark_area()
+        .encode(x=alt.X("sold_price:Q"), y="density:Q", color="dataset")
+        .properties(height=150)
+    )
+
+    return chart
