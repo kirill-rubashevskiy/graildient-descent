@@ -313,3 +313,59 @@ def draw_price_kde_chart(data: pd.DataFrame) -> alt.Chart:
     )
 
     return chart
+
+
+def draw_rmsle_wape_charts(
+    source: pd.DataFrame, feature: str, title: str, orient: str = "v", width: int = 310
+) -> alt.Chart:
+    """
+    Draws a combined chart for visualizing RMSLE and WAPE values across different
+    estimators, grouped by a specified feature.
+
+    Parameters:
+        source: The DataFrame containing the data to plot, including columns for estimator
+        class, RMSLE, WAPE, and the specified feature.
+        feature: The name of the column in the DataFrame to use for the x-axis (e.g., a
+        categorical feature like size normalization).
+        title: Title of the chart.
+        orient: Orientation of the charts, either 'v' (vertical) or 'h' (horizontal).
+        width: Width of each individual chart.
+
+    Returns:
+        An Altair chart object combining RMSLE and WAPE bar charts, grouped by the specified
+        feature and estimator class.
+    """
+    base = (
+        alt.Chart(source)
+        .mark_bar()
+        .encode(
+            x=alt.X(f"{feature}:N").axis(labelAngle=0),
+            column=alt.Column("estimator_class", title=None),
+        )
+        .properties(height=200, width=width)
+    )
+
+    rmsle_chart = base.encode(
+        xOffset=alt.XOffset("rmsle:N").sort("descending"),
+        y=alt.Y("rmsle_value:Q").axis(title="RMSLE", format=".2f"),
+        color=alt.Color("rmsle").legend(title=None, orient="bottom"),
+    )
+
+    wape_chart = base.encode(
+        xOffset=alt.XOffset("wape:N").sort("descending"),
+        y=alt.Y("wape_value:Q").axis(title="WAPE"),
+        color=alt.Color("wape").legend(title=None, orient="bottom"),
+    )
+
+    if orient == "v":
+        chart = (rmsle_chart & wape_chart).resolve_scale(xOffset="independent")
+    elif orient == "h":
+        chart = (rmsle_chart | wape_chart).resolve_scale(xOffset="independent")
+    else:
+        raise ValueError(
+            "Invalid value for orient. Use 'v' for vertical or 'h' for horizontal."
+        )
+
+    return st.altair_chart(
+        chart.properties(title=title).configure_title(anchor="middle")
+    )
