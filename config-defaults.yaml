@@ -1,7 +1,7 @@
 train_dataset:
-  value: train_10k.csv
+  value: train_25k.csv
 eval_dataset:
-  value: eval_10k.csv
+  value: eval_25k.csv
 use_tab_features:
   value: True
 use_text_features:
