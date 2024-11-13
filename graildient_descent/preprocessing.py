@@ -91,7 +91,7 @@ class SizeTransformer(BaseEstimator, TransformerMixin):
         # Apply the transformation in-place
         if self.normalize_size:
             X["size"] = X.apply(
-                lambda row: (
+                lambda row: str(
                     self.size_map["ONE SIZE"]
                     if row["category"] == "accessories"
                     else self.size_map.get(row["size"])
@@ -135,9 +135,9 @@ class FeatureTransformer(BaseEstimator, TransformerMixin):
 
     def __init__(
         self,
-        numeric_cols: list[str] = tuple(["n_photos"]),
-        ohe_cols: list[str] = ("department", "category"),
-        oe_cols: list[str] = tuple(["condition"]),
+        numeric_cols: list[str] = ["n_photos"],
+        ohe_cols: list[str] = ["department", "category"],
+        oe_cols: list[str] = ["condition"],
         catboost_cols: list[str] = None,
         te_cols: list[str] = None,
         scaler_params: dict = None,
@@ -149,9 +149,9 @@ class FeatureTransformer(BaseEstimator, TransformerMixin):
         no_encoding: bool = False,
     ):
         # Initialize feature categories and set default lists if not provided
-        self.numeric_cols = list(numeric_cols)
-        self.ohe_cols = list(ohe_cols)
-        self.oe_cols = list(oe_cols)
+        self.numeric_cols = numeric_cols or []
+        self.ohe_cols = ohe_cols or []
+        self.oe_cols = oe_cols or []
         self.catboost_cols = catboost_cols or []
         self.scaler_params = scaler_params or {}
         self.ohe_params = ohe_params or {}
