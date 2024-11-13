@@ -18,7 +18,7 @@ def run_experiment(
     entity: str = "kirill-rubashevskiy",
     project: str = "graildient-descent",
     tags: list = None,
-    wbsync: bool = False,
+    wbsync: bool = True,
     save_model: bool = False,
     **config,
 ) -> None:
