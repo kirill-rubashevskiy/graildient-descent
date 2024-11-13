@@ -28,7 +28,7 @@ def display_ml_experiments_setup():
         ensemble) to identify promising candidates.
         2. **Explore Feature Types**: Evaluate performance using tabular features alone,
          text features alone, and a combination of both.
-        3. **Test Encoding Strategies for Categorical Features**: Experiment with
+        3. **Test Different Encoding Strategies for Categorical Features**: Experiment with
         different encoding techniques like One-Hot Encoding, Target Encoding, and
         CatBoost Encoding for categorical features.
         4. **Optimize Text Feature Vectorization**: Experiment with various vectorizers
