@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from catboost import CatBoostRegressor
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.compose import TransformedTargetRegressor
 from sklearn.dummy import DummyRegressor
 from sklearn.ensemble import (
     ExtraTreesRegressor,
@@ -33,20 +32,12 @@ from graildient_descent.preprocessing import FeatureTransformer
 MAX_ITER = 20000
 RANDOM_STATE = 42
 
-tt_params = {"func": np.log, "inverse_func": np.exp}
-
 estimators = {
     "c-median": DummyRegressor(strategy="median"),
-    "lr": TransformedTargetRegressor(LinearRegression(), **tt_params),
-    "ridge": TransformedTargetRegressor(
-        Ridge(random_state=RANDOM_STATE, max_iter=MAX_ITER), **tt_params
-    ),
-    "lasso": TransformedTargetRegressor(
-        Lasso(random_state=RANDOM_STATE, max_iter=MAX_ITER), **tt_params
-    ),
-    "enet": TransformedTargetRegressor(
-        ElasticNet(random_state=RANDOM_STATE, max_iter=MAX_ITER), **tt_params
-    ),
+    "lr": LinearRegression(),
+    "ridge": Ridge(random_state=RANDOM_STATE, max_iter=MAX_ITER),
+    "lasso": Lasso(random_state=RANDOM_STATE, max_iter=MAX_ITER),
+    "enet": ElasticNet(random_state=RANDOM_STATE, max_iter=MAX_ITER),
     "huber": HuberRegressor(max_iter=MAX_ITER),
     "dtree": DecisionTreeRegressor(random_state=RANDOM_STATE),
     "rforest": RandomForestRegressor(random_state=RANDOM_STATE),
@@ -160,12 +151,7 @@ class Model(BaseEstimator, TransformerMixin):
                 f"Supported estimators are {list(estimators.keys())}"
             )
         estimator = estimators[self.estimator_class]
-
-        # Handle TransformedTargetRegressor if needed
-        if isinstance(estimator, TransformedTargetRegressor):
-            estimator.regressor.set_params(**self.estimator_params)
-        else:
-            estimator.set_params(**self.estimator_params)
+        estimator.set_params(**self.estimator_params)
 
         if self.use_tab_features:
             transformer = FeatureTransformer(**self.transformer_params)
@@ -179,9 +165,8 @@ class Model(BaseEstimator, TransformerMixin):
 
         if self.use_tab_features and self.use_text_features:
             preprocessor = FeatureUnion(
-                [("transformer", transformer), ("extractor", extractor)],
-                verbose_feature_names_out=False,
-            ).set_output(transform="pandas")
+                [("transformer", transformer), ("extractor", extractor)]
+            )
         elif self.use_tab_features:
             preprocessor = transformer
         else:
@@ -225,11 +210,11 @@ class Model(BaseEstimator, TransformerMixin):
             X: The features to predict on.
 
         Returns:
-            The predicted labels, constrained to positive values.
+            The predicted labels after exponential transformation.
         """
 
         predictions = self.pipeline.predict(X)
-        return np.abs(predictions)
+        return np.expm1(predictions)
 
     def save_model(self, path: str):
         """
@@ -253,15 +238,7 @@ class Model(BaseEstimator, TransformerMixin):
         params = super().get_params(deep)
         if deep:
             params.update(self.pipeline.named_steps["preprocessor"].get_params(deep))
-            if isinstance(
-                self.pipeline.named_steps["estimator"], TransformedTargetRegressor
-            ):
-                # Include parameters of the wrapped estimator
-                params.update(
-                    self.pipeline.named_steps["estimator"].regressor.get_params(deep)
-                )
-            else:
-                params.update(self.pipeline.named_steps["estimator"].get_params(deep))
+            params.update(self.pipeline.named_steps["estimator"].get_params(deep))
         return params
 
     def set_params(self, **params):

@@ -1,6 +1,8 @@
 import logging
 import os
 
+import numpy as np
+
 import wandb
 from graildient_descent.model import Model
 from graildient_descent.utils import load_data, set_random_seed, unflatten
@@ -65,6 +67,9 @@ def run_experiment(
     X_eval = eval.drop(columns=["sold_price", "id", "parsing_date"])
     y_eval = eval["sold_price"]
 
+    # Log-transform train target
+    y_train_log = np.log1p(y_train)
+
     # Extract model-specific configurations
     model_configs = {
         "model_name": run.name,  # Use the wandb run name as the model name
@@ -80,7 +85,7 @@ def run_experiment(
     model = Model(**model_configs)
 
     # Train the model on the training set
-    model.fit(X_train, y_train)
+    model.fit(X_train, y_train_log)
 
     # Evaluate the model on the training set
     train_metrics = model.evaluate(X_train, y_train)
