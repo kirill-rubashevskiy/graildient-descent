@@ -179,8 +179,7 @@ def display_ml_experiments_results():
 
     cboost_none_source = get_sweep_data("82onjiqa")
     cboost_none_source = cboost_none_source[
-        (cboost_none_source.use_tab_features is True)
-        & (cboost_none_source.use_text_features is True)
+        cboost_none_source.use_tab_features & cboost_none_source.use_text_features
     ]
     cboost_none_source["cboost_encoder_cols"] = "none"
     cboost_mid_high_source = get_sweep_data("2wyuq27i")
