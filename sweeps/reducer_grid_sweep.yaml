@@ -1,0 +1,28 @@
+program: graildient_descent/experiment.py
+method: grid
+project: graildient-descent
+metric:
+  goal: minimize
+  name: rmsle_eval
+parameters:
+  estimator_class:
+    values: [ridge, catboost]
+  extractor_params.reducer_class:
+    values: [pca, umap]
+  extractor_params.reducer_params.n_components:
+    values: [50, 100, 150]
+  use_text_features:
+    value: True
+  transformer_params.catboost_cols:
+    value: [subcategory, size, designer, color]
+  extractor_params.vectorizer_class:
+    value: tfidf
+  extractor_params.vectorizer_params.ngram_range:
+    value: [1, 3]
+  extractor_params.vectorizer_params.min_df:
+    value: 5
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - ${args}

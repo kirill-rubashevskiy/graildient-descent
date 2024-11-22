@@ -1,0 +1,29 @@
+program: graildient_descent/experiment.py
+method: grid
+project: graildient-descent
+metric:
+  goal: minimize
+  name: rmsle_eval
+parameters:
+  estimator_class:
+    values:
+      [
+        c-median,
+        lr,
+        ridge,
+        lasso,
+        lasso,
+        enet,
+        huber,
+        dtree,
+        rforest,
+        xtrees,
+        gboost,
+        catboost,
+        knn,
+      ]
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - ${args}
