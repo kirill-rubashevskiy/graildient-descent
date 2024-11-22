@@ -1,4 +1,5 @@
 import streamlit as st
+from modules.ml_experiments_results import display_ml_experiments_results
 from modules.ml_experiments_setup import display_ml_experiments_setup
 
 
@@ -15,3 +16,7 @@ tab1, tab2 = st.tabs(["Experiments Setup", "Experiments Results"])
 with tab1:  # Experiments Setup
 
     display_ml_experiments_setup()
+
+with tab2:  # Experiments Results
+
+    display_ml_experiments_results()
