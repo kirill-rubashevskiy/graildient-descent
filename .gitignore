@@ -56,8 +56,9 @@ coverage.xml
 data/
 models/
 
-# Streamlit cache
+# Streamlit
 .streamlit/
+streamlit_app/texts/
 
 # FastAPI static files
 fastapi_app/static/
@@ -70,7 +71,6 @@ fastapi_app/static/
 # Weights & Biases
 wandb/
 .wandb/
-sweeps/
 
 # System files
 .DS_Store
