@@ -1,0 +1,22 @@
+program: graildient_descent/experiment.py
+method: grid
+project: graildient-descent
+metric:
+  goal: minimize
+  name: rmsle_eval
+parameters:
+  estimator_class:
+    values: [ridge, catboost]
+  transformer_params.catboost_cols:
+    value: [subcategory, size, designer, color, condition, department, category]
+  transformer_params.ohe_cols:
+    value: null
+  transformer_params.oe_cols:
+    value: null
+  use_text_features:
+    value: True
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - ${args}

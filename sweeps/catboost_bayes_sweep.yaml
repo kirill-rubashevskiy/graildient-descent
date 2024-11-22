@@ -1,0 +1,48 @@
+program: graildient_descent/experiment.py
+method: bayes
+project: graildient-descent
+metric:
+  name: rmsle_eval
+  goal: minimize
+parameters:
+  estimator_params.learning_rate:
+    distribution: log_uniform_values
+    min: 0.001
+    max: 0.3
+  estimator_params.depth:
+    distribution: int_uniform
+    min: 4
+    max: 10
+  estimator_params.l2_leaf_reg:
+    distribution: log_uniform_values
+    min: 1.0
+    max: 10.0
+  estimator_class:
+    value: catboost
+  use_text_features:
+    value: True
+  transformer_params.catboost_cols:
+    value: [subcategory, size, designer, color]
+  extractor_params.vectorizer_class:
+    value: tfidf
+  extractor_params.vectorizer_params.ngram_range:
+    value: [1, 3]
+  extractor_params.vectorizer_params.min_df:
+    value: 5
+  extractor_params.reducer_class:
+    value: pca
+  extractor_params.reducer_params.n_components:
+    value: 100
+
+# Additional sweep configuration
+early_terminate:
+  type: hyperband
+  min_iter: 2
+  eta: 3
+  max_iter: 10
+
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - ${args}
