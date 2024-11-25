@@ -158,8 +158,121 @@ class GrailedLoginManager:
             return False
 
 
-class GrailedScraper:
-    """Main class for scraping Grailed listings."""
+class GrailedBaseScraper:
+    """Base class containing common scraping functionality."""
+
+    def __init__(self):
+        self.ua = UserAgent()
+        self.logger = logging.getLogger(__name__)
+
+    @staticmethod
+    def _scrape_listing_data(soup, sold=True) -> dict | str:
+        """
+        Extract data from the listing page.
+
+        :param soup: A BeautifulSoup object representing the HTML content of the listing page.
+        :param sold: True if the listing is sold.
+        :return: A dictionary containing the scraped data or a string with the exception name if an error occurs.
+        """
+        try:
+            # Extract listing details using BeautifulSoup
+            category = soup.select('[href*="/designers/"]')[2]["href"].split("/")[-1]
+            color = soup.select_one(
+                'p[class="Body_body__dIg1V Text Details_detail__J0Uny Details_nonMobile__AObqX"]'
+                ':-soup-contains("Color")'
+            ).text.removeprefix("Color ")
+            condition = soup.select_one(
+                'p[class="Body_body__dIg1V Text Details_detail__J0Uny Details_nonMobile__AObqX"]'
+                ':-soup-contains("Condition")'
+            ).text.removeprefix("Condition ")
+            department = soup.select('[href*="/designers/"]')[1]["href"].split("/")[-1]
+            designer = soup.select('[href*="/designers/"]')[0]["href"].split("/")[-1]
+            description = soup.select(
+                'p[class="Body_body__dIg1V Text Description_paragraph__Gs7y6"]'
+            )
+            description = " ".join(
+                [paragraph.text for paragraph in description]
+            )  # Join all paragraphs in the description
+            hashtags = soup.select('a[href*="hashtag"]')
+            if hashtags:  # Hashtags are optional
+                hashtags = " ".join(
+                    [
+                        hashtag["href"].removeprefix("/shop?hashtag=")
+                        for hashtag in hashtags
+                    ]
+                )
+            else:
+                hashtags = None
+            item_name = soup.select_one(
+                'h1[class="Body_body__dIg1V Text Details_title__PpX5v"]'
+            ).text
+            n_photos = len(soup.select('button[class="Button_button__30ukX"]'))
+            size = soup.select_one(
+                'p[class="Body_body__dIg1V Text Details_detail__J0Uny Details_nonMobile__AObqX"]'
+                ':-soup-contains("Size")'
+            ).text.removeprefix("Size ")
+            if sold:
+                sold_price = int(
+                    soup.select('span[class*="SoldPrice"]')[0].text.removeprefix("$")
+                )
+            subcategory = soup.select('[href*="/designers/"]')[3]["href"].split("/")[-1]
+        except Exception as e:
+            return (
+                e.__class__.__name__
+            )  # Return exception name if data extraction fails
+
+        listing_data = {
+            "designer": designer,
+            "department": department,
+            "category": category,
+            "subcategory": subcategory,
+            "n_photos": n_photos,
+            "item_name": item_name,
+            "size": size,
+            "color": color,
+            "condition": condition,
+            "description": description,
+            "hashtags": hashtags,
+        }
+
+        if sold:
+            listing_data["sold_price"] = sold_price
+
+        return listing_data
+
+    def get_listing_data(self, listing_link: str, sold=True) -> dict | dict:
+        """
+        Scrape and return data from a listing.
+
+        :param listing_link: The URL of the listing.
+        :return: A dictionary containing the listing data if successful, or a dictionary with error details if the request fails.
+        """
+        try:
+            listing = requests.get(listing_link, headers={"User-Agent": self.ua.random})
+            if not listing.ok:
+                return {"error": "HTTPError", "status_code": listing.status_code}
+
+            soup = BeautifulSoup(listing.content, features="html.parser")
+            data = self._scrape_listing_data(soup, sold=sold)
+
+            if isinstance(data, str):  # If _scrape_listing_data returns an error name
+                return {"error": data, "message": "Failed to scrape listing data"}
+
+            return data
+
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"Failed to retrieve listing from {listing_link}: {e}")
+            return {"error": e.__class__.__name__, "message": str(e)}
+
+
+class GrailedListingScraper(GrailedBaseScraper):
+    """Scraper for individual listings without authentication."""
+
+    pass  # All functionality is inherited from GrailedBaseScraper
+
+
+class GrailedScraper(GrailedBaseScraper):
+    """Scraper for bulk collection of sold listings with authentication."""
 
     def __init__(self, email: str, password: str):
         """
@@ -168,11 +281,10 @@ class GrailedScraper:
         :param email: The email address for logging into Grailed.
         :param password: The password for logging into Grailed.
         """
+        super().__init__()
         self.base_url = "https://www.grailed.com/"
         self.email = email
         self.password = password
-        self.ua = UserAgent()  # UserAgent for generating random user agents
-        self.logger = logging.getLogger(__name__)
         self.driver_manager = WebDriverManager()  # Get Chrome WebDriver instance
 
     @staticmethod
@@ -242,75 +354,6 @@ class GrailedScraper:
                 )
             )
 
-    @staticmethod
-    def _scrape_listing_data(soup) -> dict | str:
-        """
-        Extract data from the listing page.
-
-        :param soup: A BeautifulSoup object representing the HTML content of the listing page.
-        :return: A dictionary containing the scraped data or a string with the exception name if an error occurs.
-        """
-        try:
-            # Extract listing details using BeautifulSoup
-            category = soup.select('[href*="/designers/"]')[2]["href"].split("/")[-1]
-            color = soup.select_one(
-                'p[class="Body_body__dIg1V Text Details_detail__J0Uny Details_nonMobile__AObqX"]'
-                ':-soup-contains("Color")'
-            ).text.removeprefix("Color ")
-            condition = soup.select_one(
-                'p[class="Body_body__dIg1V Text Details_detail__J0Uny Details_nonMobile__AObqX"]'
-                ':-soup-contains("Condition")'
-            ).text.removeprefix("Condition ")
-            department = soup.select('[href*="/designers/"]')[1]["href"].split("/")[-1]
-            designer = soup.select('[href*="/designers/"]')[0]["href"].split("/")[-1]
-            description = soup.select(
-                'p[class="Body_body__dIg1V Text Description_paragraph__Gs7y6"]'
-            )
-            description = " ".join(
-                [paragraph.text for paragraph in description]
-            )  # Join all paragraphs in the description
-            hashtags = soup.select('a[href*="hashtag"]')
-            if hashtags:  # Hashtags are optional
-                hashtags = " ".join(
-                    [
-                        hashtag["href"].removeprefix("/shop?hashtag=")
-                        for hashtag in hashtags
-                    ]
-                )
-            else:
-                hashtags = None
-            item_name = soup.select_one(
-                'h1[class="Body_body__dIg1V Text Details_title__PpX5v"]'
-            ).text
-            n_photos = len(soup.select('button[class="Button_button__30ukX"]'))
-            size = soup.select_one(
-                'p[class="Body_body__dIg1V Text Details_detail__J0Uny Details_nonMobile__AObqX"]'
-                ':-soup-contains("Size")'
-            ).text.removeprefix("Size ")
-            sold_price = int(
-                soup.select('span[class*="SoldPrice"]')[0].text.removeprefix("$")
-            )
-            subcategory = soup.select('[href*="/designers/"]')[3]["href"].split("/")[-1]
-        except Exception as e:
-            return (
-                e.__class__.__name__
-            )  # Return exception name if data extraction fails
-
-        return {
-            "designer": designer,
-            "department": department,
-            "category": category,
-            "subcategory": subcategory,
-            "n_photos": n_photos,
-            "item_name": item_name,
-            "size": size,
-            "color": color,
-            "condition": condition,
-            "description": description,
-            "hashtags": hashtags,
-            "sold_price": sold_price,
-        }
-
     def get_links(self, n_listings: int = 800) -> tuple[list[str], list[str]]:
         """
         Retrieve links to the listings and cover images.
@@ -357,30 +400,6 @@ class GrailedScraper:
         listings_links = listings_links[:n_listings]
 
         return [link.get_attribute("href") for link in listings_links]
-
-    def get_listing_data(self, listing_link: str) -> dict | dict:
-        """
-        Scrape and return data from a listing.
-
-        :param listing_link: The URL of the listing.
-        :return: A dictionary containing the listing data if successful, or a dictionary with error details if the request fails.
-        """
-        try:
-            listing = requests.get(listing_link, headers={"User-Agent": self.ua.random})
-            if not listing.ok:
-                return {"error": "HTTPError", "status_code": listing.status_code}
-
-            soup = BeautifulSoup(listing.content, features="html.parser")
-            data = self._scrape_listing_data(soup)
-
-            if isinstance(data, str):  # If _scrape_listing_data returns an error name
-                return {"error": data, "message": "Failed to scrape listing data"}
-
-            return data
-
-        except requests.exceptions.RequestException as e:
-            self.logger.error(f"Failed to retrieve listing from {listing_link}: {e}")
-            return {"error": e.__class__.__name__, "message": str(e)}
 
     def scrape(
         self, n_listings: int = 800
