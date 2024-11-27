@@ -224,37 +224,19 @@ class Model(BaseEstimator, TransformerMixin):
 
         Saves a tuple containing:
         1. The model instance
-        2. A dictionary containing:
-            - Model configuration
-            - Performance metrics
-            - Timestamp and model name
+        2. A dictionary containing performance metrics
 
         Parameters:
             path: The file path to save the model.
-            metrics: Dictionary containing training set metrics (optional).
+            metrics: Dictionary containing metrics (optional).
         """
 
         # Create the directory if it doesn't exist
         os.makedirs(path, exist_ok=True)
 
-        # Prepare metrics and configuration data
-        metrics_data = {
-            "model_name": self.model_name,
-            "model_config": {
-                "estimator_class": self.estimator_class,
-                "use_tab_features": self.use_tab_features,
-                "use_text_features": self.use_text_features,
-                "estimator_params": self.estimator_params,
-                "transformer_params": self.transformer_params,
-                "extractor_params": self.extractor_params,
-            },
-            "metrics": metrics,
-            "timestamp": pd.Timestamp.now().isoformat(),
-        }
-
         # Save model and metrics as a tuple
         model_path = os.path.join(path, f"{self.model_name}.pkl")
-        joblib.dump((self, metrics_data), model_path)
+        joblib.dump((self, metrics), model_path)
 
     def get_params(self, deep: bool = True) -> dict:
         """
