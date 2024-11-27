@@ -9,7 +9,7 @@ comprehensive pipeline that includes data collection, preprocessing, model train
 deployment.
 
 You can explore the project’s interactive results on the
-[Streamlit App](https://graildient-descent.streamlit.app).
+[Streamlit app](https://graildient-descent.streamlit.app).
 
 ### Multimodal Data
 
@@ -39,6 +39,13 @@ under development):
   EDA, data collection, and predictions.
 - **fastapi_app/**: (To be developed) A FastAPI application for deploying the model as a
   service.
+- **api/**: FastAPI application for real-time price predictions, including:
+  - `models.py`: Pydantic models and enums for data validation
+  - `config.py`: Configuration settings and constants
+  - `services.py`: Business logic for predictions
+  - `utils.py`: Helper functions
+  - `routes.py`: API endpoint definitions
+  - `main.py`: Application entry point
 - **tests/**: Contains unit tests for various project components.
 
 ## Getting Started
@@ -76,9 +83,7 @@ poetry install --with dev
 poetry run pre-commit install
 ```
 
-## Scraper Usage
-
-<details>
+## Scraper
 
 ### Overview
 
@@ -86,6 +91,8 @@ The `GrailedScraper` is a Python class designed to scrape sold item listings fro
 [Grailed](https://www.grailed.com/). It collects details such as item names,
 descriptions, details, sold prices, and images, which are then used for further
 processing and analysis.
+
+<details>
 
 ### Setup
 
@@ -108,9 +115,7 @@ when scraping data.
 
 </details>
 
-## ETL Pipeline Usage
-
-<details>
+## ETL Pipeline
 
 ### Overview
 
@@ -123,6 +128,8 @@ performs the following tasks:
 - **Load**: Load the cleaned data into the target data storage.
 
 Refer to the Airflow documentation for more details on managing and configuring DAGs.
+
+<details>
 
 ### Setup
 
@@ -257,12 +264,51 @@ results interactively. It includes the following pages:
 The app is deployed on the Streamlit Community Hub, and you can explore it
 [here](https://graildient-descent.streamlit.app).
 
+## FastAPI Service
+
+The **FastAPI Service** provides real-time price predictions for Grailed listings
+through a RESTful API. The service includes:
+
+### Key Endpoints
+
+- **/api/v1/predictions/url**: Predict price for an existing Grailed listing using its
+  URL
+- **/api/v1/predictions/form**: Predict price for a new listing based on provided
+  features
+- **/api/v1/docs/options**: Get valid options for all categorical fields
+- **/api/v1/models/info**: Get information about the currently deployed model
+- **/api/health**: Health check endpoint
+
+### Running the API Service
+
+<details>
+
+1. **Set up environment variables**:
+
+```bash
+export PYTHONPATH=. \
+AWS_ACCESS_KEY_ID=your_aws_access_key_id \
+AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key \
+S3_MODEL_PATH=your_model_path \
+```
+
+2. **Start the service**:
+
+```bash
+python3 api/main.py
+```
+
+3. **Access the API documentation**:
+   - Swagger UI: http://localhost:8000/docs
+   - ReDoc: http://localhost:8000/redoc
+
+</details>
+
 ## Project Status
 
-The project has made significant progress, with several key components completed and
-others in development:
+The project has made significant progress:
 
-### Completed Components
+### Completed Steps
 
 - **Data Collection Pipeline**:
   - Implemented web scraper for Grailed sold listings
@@ -272,16 +318,17 @@ others in development:
   - Completed extensive EDA for tabular and text features
   - Conducted ML experiments, achieving 37.1% improvement over baseline
   - Documented experiment methodology and results
-- **Web Application**:
+- **Deployment**:
   - Deployed Streamlit app showcasing:
     - Data collection process
     - EDA visualizations and insights
     - ML experiment results and methodology
+  - Implemented FastAPI service for real-time predictions
 
 ### Next Steps
 
+- Add price prediction functionality to Streamlit app using FastAPI backend
 - Complete image feature analysis and integration
-- Implement FastAPI service for real-time predictions
 - Explore deep learning approaches for potential improvements
 
 ## Contributing
