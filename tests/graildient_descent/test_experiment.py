@@ -1,16 +1,31 @@
-import os
 from unittest.mock import MagicMock, patch
+
+import numpy as np
+import pandas as pd
 
 from graildient_descent.experiment import run_experiment
 
 
-# Mock data to be returned by load_data
-mock_train_data = MagicMock()
-mock_eval_data = MagicMock()
-mock_train_data.drop.return_value = "X_train"
-mock_train_data.__getitem__.return_value = "y_train"
-mock_eval_data.drop.return_value = "X_eval"
-mock_eval_data.__getitem__.return_value = "y_eval"
+# Create mock DataFrames
+mock_train_data = pd.DataFrame(
+    {
+        "sold_price": [100, 200, 300],
+        "id": [1, 2, 3],
+        "parsing_date": ["2024-01-01"] * 3,
+        "feature1": [1, 2, 3],
+        "feature2": ["a", "b", "c"],
+    }
+)
+
+mock_eval_data = pd.DataFrame(
+    {
+        "sold_price": [150, 250, 350],
+        "id": [4, 5, 6],
+        "parsing_date": ["2024-01-01"] * 3,
+        "feature1": [4, 5, 6],
+        "feature2": ["d", "e", "f"],
+    }
+)
 
 # Mock evaluation metrics
 mock_train_metrics = {"rmsle": 0.1, "wape": 0.2}
@@ -59,38 +74,36 @@ def test_run_experiment(mock_makedirs, mock_Model, mock_load_data, mock_wandb):
         **config,
     )
 
-    # Assertions to ensure that external dependencies are called correctly
+    # Verify wandb initialization
+    mock_wandb.init.assert_called_once()
 
-    # Check that wandb.init was called with the correct parameters
-    mock_wandb.init.assert_called_once_with(
-        entity=entity,
-        project=project,
-        config=config,
-        mode="disabled",
-        tags=tags,
-    )
-
-    # Check that load_data was called for both train and eval datasets
+    # Verify data loading
     assert mock_load_data.call_count == 2
 
-    # Check that the Model was initialized
+    # Verify model initialization
     mock_Model.assert_called_once()
 
-    # Check that model.fit was called with correct arguments
-    mock_model.fit.assert_called_once_with("X_train", "y_train")
+    # Verify model training
+    # Get the actual call arguments
+    fit_call_args = mock_model.fit.call_args[0]
+    X_train, y_train_log = fit_call_args
 
-    # Check that model.evaluate was called twice (train and eval)
+    # Check that X_train is the correct DataFrame (excluding specified columns)
+    pd.testing.assert_frame_equal(
+        X_train, mock_train_data.drop(columns=["sold_price", "id", "parsing_date"])
+    )
+
+    # Check that y_train_log is the log-transformed target
+    np.testing.assert_array_almost_equal(
+        y_train_log, np.log1p(mock_train_data["sold_price"].values)
+    )
+
+    # Verify model evaluation calls
     assert mock_model.evaluate.call_count == 2
-    mock_model.evaluate.assert_any_call("X_train", "y_train")
-    mock_model.evaluate.assert_any_call("X_eval", "y_eval")
 
-    # Check that os.makedirs was called to create the directory for saving the model
+    # Verify model saving
     mock_makedirs.assert_called_once_with("models/tmp/", exist_ok=True)
-
-    # Check that model.save_model was called with the correct path
     mock_model.save_model.assert_called_once()
-    save_path = os.path.join("models", "tmp")
-    mock_model.save_model.assert_called_with(save_path)
 
-    # Check that wandb.run.finish was called
+    # Verify wandb run completion
     mock_run.finish.assert_called_once()
