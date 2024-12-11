@@ -19,6 +19,7 @@ from sklearn.preprocessing import StandardScaler
 nltk.download("punkt", quiet=True)
 nltk.download("wordnet", quiet=True)
 nltk.download("stopwords", quiet=True)
+nltk.download("punkt_tab", quiet=True)
 
 
 def preprocess_text(text, placeholder="missing"):

@@ -1,3 +1,4 @@
+import nltk
 import numpy as np
 import pandas as pd
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
@@ -8,6 +9,9 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.pipeline import make_pipeline
 from umap import UMAP
+
+
+nltk.download("vader_lexicon")
 
 
 RANDOM_STATE = 42
