@@ -1,4 +1,3 @@
-import os
 from io import BytesIO
 
 import boto3
@@ -9,17 +8,6 @@ import streamlit as st
 import wandb
 
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = os.getenv("AWS_REGION", "ru-central1")  # Default to ru-central1 if not set
-AWS_ENDPOINT_URL = os.getenv("AWS_ENDPOINT_URL", "https://storage.yandexcloud.net")
-ENTITY = "kirill-rubashevskiy"
-PROJECT = "graildient-descent"
-
-if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY:
-    raise EnvironmentError("AWS credentials not found in environment variables.")
-
-
 @st.cache_data
 def load_data_from_s3(bucket_name, s3_key, **params) -> pd.DataFrame:
     """Download a CSV file from S3 and read it into a Pandas DataFrame."""
@@ -27,10 +15,10 @@ def load_data_from_s3(bucket_name, s3_key, **params) -> pd.DataFrame:
     # Initialize the S3 client
     s3 = boto3.client(
         "s3",
-        aws_access_key_id=AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-        region_name=AWS_REGION,
-        endpoint_url=AWS_ENDPOINT_URL,
+        aws_access_key_id=st.secrets.aws.access_key_id,
+        aws_secret_access_key=st.secrets.aws.secret_access_key,
+        region_name=st.secrets.aws.region,
+        endpoint_url=st.secrets.aws.endpoint_url,
     )
 
     try:
@@ -94,7 +82,9 @@ def get_unique_values(data: pd.DataFrame, features: list[str]) -> dict:
 
 
 def get_sweep_data(
-    sweep_id: str, entity: str = ENTITY, project: str = PROJECT
+    sweep_id: str,
+    entity: str = st.secrets.wandb.entity,
+    project: str = st.secrets.wandb.project,
 ) -> pd.DataFrame:
     """
     Fetches sweep data from Weights & Biases and returns it as a DataFrame.

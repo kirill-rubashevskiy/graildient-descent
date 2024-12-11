@@ -4,8 +4,6 @@ import streamlit as st
 from modules.data_utils import load_data_from_s3
 
 
-BUCKET_NAME = "grailed"
-DATA_PATH = "data/splits/25k"
 SAMPLE_SIZE = 1000
 PRICE_MAX = 1000
 
@@ -13,15 +11,21 @@ PRICE_MAX = 1000
 def display_ml_experiments_setup():
     # load datasets
     train_df = load_data_from_s3(
-        BUCKET_NAME, f"{DATA_PATH}/train_25k.csv", nrows=SAMPLE_SIZE
+        st.secrets.s3.bucket_name,
+        f"{st.secrets.s3.data_path}/train_25k.csv",
+        nrows=SAMPLE_SIZE,
     )
     train_df["dataset"] = "train"
     eval_df = load_data_from_s3(
-        BUCKET_NAME, f"{DATA_PATH}/eval_25k.csv", nrows=SAMPLE_SIZE
+        st.secrets.s3.bucket_name,
+        f"{st.secrets.s3.data_path}/eval_25k.csv",
+        nrows=SAMPLE_SIZE,
     )
     eval_df["dataset"] = "eval"
     test_df = load_data_from_s3(
-        BUCKET_NAME, f"{DATA_PATH}/test_25k.csv", nrows=SAMPLE_SIZE
+        st.secrets.s3.bucket_name,
+        f"{st.secrets.s3.data_path}/test_25k.csv",
+        nrows=SAMPLE_SIZE,
     )
     test_df["dataset"] = "test"
     data = pd.concat([train_df, eval_df, test_df])
