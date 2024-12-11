@@ -29,7 +29,9 @@ jobs:
         run: poetry install --with dev
 
       - name: Run Tests with pytest
-        run: poetry run pytest tests/ -v --cov=graildient_descent --cov-report=xml
+        run:
+          export PYTHONPATH=. && pytest tests/ -v --cov=graildient_descent
+          --cov-report=xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
