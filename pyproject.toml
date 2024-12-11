@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 pandas = "^2.2.2"
-scikit-learn = "^1.5.1"
+scikit-learn = "^1.4.1"
 gensim = "^4.3.3"
 nltk = "^3.8.2"
 category-encoders = "^2.6.3"
