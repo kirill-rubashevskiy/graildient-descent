@@ -266,9 +266,3 @@ class PredictionResponse(BaseModel):
     prediction_id: str
     predicted_price: float
     metadata: dict[str, Any]
-
-
-class ErrorResponse(BaseModel):
-    error: str
-    message: str
-    status_code: int
