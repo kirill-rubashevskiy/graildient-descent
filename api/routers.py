@@ -5,7 +5,6 @@ from api.models import (
     Category,
     Condition,
     Department,
-    ErrorResponse,
     Listing,
     ListingUrl,
     PredictionResponse,
@@ -21,7 +20,6 @@ router = APIRouter(prefix="/api/v1")
 @router.post(
     "/predictions/url",
     response_model=PredictionResponse,
-    responses={422: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
 )
 async def predict_existing_listing(listing_url: ListingUrl, request: Request):
     """Predict price for an existing Grailed listing using its URL."""
@@ -31,6 +29,9 @@ async def predict_existing_listing(listing_url: ListingUrl, request: Request):
         return generate_prediction_response(
             prediction, prediction_service.model.model_name
         )
+    except HTTPException as he:
+        logger.error(f"HTTP error processing URL prediction: {str(he)}")
+        raise
     except Exception as e:
         logger.error(f"Error processing URL prediction: {str(e)}")
         raise HTTPException(
@@ -41,7 +42,6 @@ async def predict_existing_listing(listing_url: ListingUrl, request: Request):
 @router.post(
     "/predictions/form",
     response_model=PredictionResponse,
-    responses={422: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
 )
 async def predict_new_listing(listing: Listing, request: Request):
     """Predict price for a new listing based on provided features."""
