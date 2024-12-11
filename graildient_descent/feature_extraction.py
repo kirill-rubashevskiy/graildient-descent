@@ -146,8 +146,18 @@ class TextFeatureExtractor(BaseEstimator, TransformerMixin):
             self.vectorizer_params["ngram_range"] = tuple(
                 self.vectorizer_params["ngram_range"]
             )
+        if self.vectorizer_class not in vectorizers.keys():
+            raise ValueError(
+                f"Vectorizer '{self.vectorizer_class}' is not supported. "
+                f"Supported vectorizers are {list(vectorizers.keys())}"
+            )
         vectorizer = vectorizers[self.vectorizer_class]
         vectorizer.set_params(**self.vectorizer_params)
+        if self.reducer_class not in reducers.keys():
+            raise ValueError(
+                f"Reducer '{self.reducer_class}' is not supported. "
+                f"Supported reducers are {list(reducers.keys())}"
+            )
         reducer = reducers[self.reducer_class]
         reducer.set_params(**self.reducer_params)
 
