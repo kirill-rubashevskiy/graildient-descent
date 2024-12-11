@@ -33,8 +33,8 @@ jobs:
           echo "PYTHONPATH=." >> $GITHUB_ENV
 
       - name: Run Tests with pytest
-        run:
-          export PYTHONPATH=. && pytest tests/ -v --cov=graildient_descent
+        run: |
+          pytest tests/ -v --cov=graildient_descent
           --cov-report=xml
 
       - name: Upload coverage to Codecov
