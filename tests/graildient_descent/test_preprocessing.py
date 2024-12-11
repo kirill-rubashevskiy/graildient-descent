@@ -117,8 +117,8 @@ class TestSizeTransformer:
         """
         transformer = SizeTransformer(normalize_size=True)
         transformed = transformer.transform(sample_data)
-
-        assert all(transformed >= 0) & all(transformed <= 1)
+        transformed_values = transformed["size"].astype(float).values
+        assert (transformed_values >= 0).all() and (transformed_values <= 1).all()
 
     def test_size_transformer_feature_names_out(self, sample_data):
         """

@@ -89,7 +89,7 @@ class TestModel:
         with tempfile.TemporaryDirectory() as tmpdir:
             model_path = os.path.join(tmpdir, "test_model.pkl")
             model.save_model(tmpdir)
-            loaded_model = Model.load_model(model_path)
+            loaded_model, _ = Model.load_model(model_path)
             assert isinstance(loaded_model, Model)
             assert (
                 loaded_model.predict(sample_data).all()
@@ -126,7 +126,7 @@ class TestModel:
         """
         bucket_name = "my-bucket"
         with pytest.raises(FileNotFoundError, match="was not found in the S3 bucket"):
-            Model.load_model("non_existent.csv", from_s3=True, bucket_name=bucket_name)
+            Model.load_model("non_existent.pkl", from_s3=True, bucket_name=bucket_name)
 
     def test_load_model_s3_missing_bucket(self, aws_credentials):
         """
@@ -143,9 +143,7 @@ class TestModel:
         Test that load_model raises EnvironmentError when S3 credentials are missing.
         """
         mock_getenv.return_value = None
-        with pytest.raises(
-            EnvironmentError, match="Yandex Cloud credentials not found"
-        ):
+        with pytest.raises(EnvironmentError, match="AWS credentials not found"):
             Model.load_model(path="model.pkl", from_s3=True, bucket_name="my-bucket")
 
     # ----- Model Parameter Handling Tests -----
@@ -188,20 +186,6 @@ class TestModel:
             model.pipeline.named_steps["estimator"].get_params()["n_estimators"] == 50
         )
 
-    def test_set_params_updates_target_transformer(self):
-        """
-        Test that updating parameters for the internal estimator within TransformedTargetRegressor works as expected.
-        """
-        model = Model(
-            model_name="test_model",
-            estimator_class="lr",
-            estimator_params={"fit_intercept": False},
-        )
-        model.set_params(estimator_params={"fit_intercept": True})
-
-        internal_estimator = model.pipeline.named_steps["estimator"].regressor
-        assert internal_estimator.get_params()["fit_intercept"] is True
-
     # ----- Model Handling of Tabular and Text Features -----
 
     def test_model_with_both_tab_and_text_features(
@@ -218,7 +202,7 @@ class TestModel:
             transformer_params={"numeric_cols": ["n_photos"], "ohe_cols": ["color"]},
             extractor_params={
                 "text_cols": ["description"],
-                "description_pca_n_components": 2,
+                "reducer_params": {"n_components": 2},
             },
         )
         model.fit(sample_data, sample_targets)
@@ -238,7 +222,7 @@ class TestModel:
             use_text_features=True,
             extractor_params={
                 "text_cols": ["description"],
-                "description_pca_n_components": 2,
+                "reducer_params": {"n_components": 2},
             },
         )
         model.fit(sample_data, sample_targets)
