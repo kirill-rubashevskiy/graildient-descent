@@ -61,7 +61,7 @@ models/
 streamlit_app/texts/
 
 # FastAPI static files
-fastapi_app/static/
+api/static/
 
 # Logs and databases
 *.log
