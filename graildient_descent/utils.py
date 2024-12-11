@@ -30,16 +30,16 @@ def load_data(
     """
     if from_s3:
         # Fetch Yandex S3 credentials from environment variables
-        YC_ACCESS_KEY_ID = os.getenv("YC_ACCESS_KEY_ID")
-        YC_SECRET_ACCESS_KEY = os.getenv("YC_SECRET_ACCESS_KEY")
-        YC_REGION = os.getenv("YC_REGION", "ru-central1")  # Default region
-        YC_ENDPOINT_URL = os.getenv(
-            "YC_ENDPOINT_URL", "https://storage.yandexcloud.net"
+        AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+        AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+        AWS_REGION = os.getenv("AWS_REGION", "ru-central1")  # Default region
+        AWS_ENDPOINT_URL = os.getenv(
+            "AWS_ENDPOINT_URL", "https://storage.yandexcloud.net"
         )
 
-        if not YC_ACCESS_KEY_ID or not YC_SECRET_ACCESS_KEY:
+        if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY:
             raise EnvironmentError(
-                "Yandex Cloud credentials not found in environment variables."
+                "AWS credentials not found in environment variables."
             )
 
         if not bucket_name:
@@ -48,10 +48,10 @@ def load_data(
         # Load the CSV file from Yandex S3
         s3 = boto3.client(
             "s3",
-            aws_access_key_id=YC_ACCESS_KEY_ID,
-            aws_secret_access_key=YC_SECRET_ACCESS_KEY,
-            region_name=YC_REGION,
-            endpoint_url=YC_ENDPOINT_URL,
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            region_name=AWS_REGION,
+            endpoint_url=AWS_ENDPOINT_URL,
         )
         try:
             obj = s3.get_object(Bucket=bucket_name, Key=filename)
