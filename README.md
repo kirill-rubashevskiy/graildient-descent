@@ -37,8 +37,6 @@ under development):
   experiments.
 - **streamlit_app/**: A Streamlit application to showcase the project with pages for
   EDA, data collection, and predictions.
-- **fastapi_app/**: (To be developed) A FastAPI application for deploying the model as a
-  service.
 - **api/**: FastAPI application for real-time price predictions, including:
   - `models.py`: Pydantic models and enums for data validation
   - `config.py`: Configuration settings and constants
