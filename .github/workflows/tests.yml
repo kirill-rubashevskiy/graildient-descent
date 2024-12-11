@@ -28,6 +28,10 @@ jobs:
       - name: Install Dependencies
         run: poetry install --with dev
 
+      - name: Set PYTHONPATH
+        run: |
+          echo "PYTHONPATH=." >> $GITHUB_ENV
+
       - name: Run Tests with pytest
         run:
           export PYTHONPATH=. && pytest tests/ -v --cov=graildient_descent
