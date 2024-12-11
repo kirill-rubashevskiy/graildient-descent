@@ -30,6 +30,7 @@ coverage = "^7.6.1"
 pytest-mock = "^3.14.0"
 moto = "^5.0.13"
 wandb = "^0.18.0"
+pytest-cov = "^6.0.0"
 
 [tool.poetry.group.web.dependencies]
 fastapi = {extras = ["standard"], version = "^0.112.1"}
