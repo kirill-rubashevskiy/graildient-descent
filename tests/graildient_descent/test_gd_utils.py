@@ -67,9 +67,7 @@ class TestLoadData:
         Test that load_data raises EnvironmentError when S3 credentials are missing.
         """
         mock_getenv.return_value = None
-        with pytest.raises(
-            EnvironmentError, match="Yandex Cloud credentials not found"
-        ):
+        with pytest.raises(EnvironmentError, match="AWS credentials not found"):
             load_data("test.csv", from_s3=True, bucket_name="my-bucket")
 
     def test_load_data_s3_file_not_found(self, create_bucket):
