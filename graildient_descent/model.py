@@ -107,7 +107,7 @@ class Model(BaseEstimator, TransformerMixin):
 
             if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY:
                 raise EnvironmentError(
-                    "AWS Cloud credentials not found in environment variables."
+                    "AWS credentials not found in environment variables."
                 )
 
             if not bucket_name:
