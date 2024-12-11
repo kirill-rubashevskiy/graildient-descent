@@ -59,8 +59,8 @@ def aws_credentials():
     """
     Mocked Yandex Cloud S3 Credentials for moto.
     """
-    os.environ["YC_ACCESS_KEY_ID"] = "testing"
-    os.environ["YC_SECRET_ACCESS_KEY"] = "testing"
+    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["MOTO_S3_CUSTOM_ENDPOINTS"] = "https://storage.yandexcloud.net"
 
 
