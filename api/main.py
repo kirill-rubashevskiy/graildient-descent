@@ -1,7 +1,6 @@
 from contextlib import asynccontextmanager
 from datetime import datetime
 
-import uvicorn
 from fastapi import FastAPI
 
 from api.config import S3_MODEL_PATH, S3_MODELS_BUCKET, logger
@@ -51,7 +50,3 @@ async def health_check():
         "timestamp": datetime.utcnow().isoformat(),
         "model_loaded": hasattr(app.state, "prediction_service"),
     }
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
