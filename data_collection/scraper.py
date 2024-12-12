@@ -247,8 +247,24 @@ class GrailedBaseScraper:
         :param listing_link: The URL of the listing.
         :return: A dictionary containing the listing data if successful, or a dictionary with error details if the request fails.
         """
+        headers = {
+            "User-Agent": self.ua.random,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Connection": "keep-alive",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "none",
+            "Sec-Fetch-User": "?1",
+            "DNT": "1",
+            "Upgrade-Insecure-Requests": "1",
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache",
+        }
+
         try:
-            listing = requests.get(listing_link, headers={"User-Agent": self.ua.random})
+            listing = requests.get(listing_link, headers=headers)
             if not listing.ok:
                 return {"error": "HTTPError", "status_code": listing.status_code}
 
