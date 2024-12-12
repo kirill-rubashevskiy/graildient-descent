@@ -1,5 +1,7 @@
 # Graildient Descent
 
+[![Python Tests](https://github.com/kirill-rubashevskiy/graildient-descent/actions/workflows/tests.yml/badge.svg)](https://github.com/kirill-rubashevskiy/graildient-descent/actions/workflows/tests.yml)
+
 ## Overview
 
 **Graildient Descent** is a machine learning project focused on predicting the sold
@@ -15,9 +17,9 @@ You can explore the project’s interactive results on the
 
 This project works with multimodal data:
 
-- **Tabular Features**: Item attributes like brand, category, and size.
-- **Text Features**: Descriptions, titles of items, and hashtags.
-- **Images**: Collected cover images of items (future work in progress).
+- **Tabular Features**: Item attributes like brand, category, and size
+- **Text Features**: Descriptions, titles of items, and hashtags
+- **Images**: Collected cover images of items (future work in progress)
 
 ## Project Structure
 
@@ -25,18 +27,17 @@ The project is organized into the following main components (some of which are s
 under development):
 
 - **graildient_descent/**: Contains the core machine learning pipeline, including:
-  - `experiment.py`: Script to run machine learning experiments.
-  - `model.py`: Model definition and related logic.
-  - `preprocessing.py`: Data preprocessing steps and utilities.
-  - `feature_extraction.py`: Text feature extraction utilities.
-  - `utils.py`: Helper functions used across the project.
+  - `experiment.py`: Script to run machine learning experiments
+  - `model.py`: Model definition and related logic
+  - `preprocessing.py`: Data preprocessing steps and utilities
+  - `feature_extraction.py`: Text feature extraction utilities
+  - `utils.py`: Helper functions used across the project
 - **data_collection/**: Contains the scraping scripts and utilities to collect and clean
-  data from Grailed.
-- **airflow/**: Contains the ETL pipeline scripts for Apache Airflow.
-- **sweeps/**: Contains Weights & Biases (wandb) sweep configurations for ML
-  experiments.
+  data from Grailed
+- **airflow/**: Contains the ETL pipeline scripts for Apache Airflow
+- **sweeps/**: Contains Weights & Biases (wandb) sweep configurations for ML experiments
 - **streamlit_app/**: A Streamlit application to showcase the project with pages for
-  EDA, data collection, and predictions.
+  EDA, data collection, and predictions
 - **api/**: FastAPI application for real-time price predictions, including:
   - `models.py`: Pydantic models and enums for data validation
   - `config.py`: Configuration settings and constants
@@ -44,7 +45,20 @@ under development):
   - `utils.py`: Helper functions
   - `routes.py`: API endpoint definitions
   - `main.py`: Application entry point
-- **tests/**: Contains unit tests for various project components.
+- **tests/**: Contains unit tests for various project components
+
+## Testing and CI/CD
+
+This project implements automated testing using GitHub Actions. The CI pipeline runs on
+all pull requests to the main branch and includes a comprehensive test suite covering:
+
+- Data collection and web scraping functionality
+- Data preprocessing and feature engineering pipeline
+- Model training and evaluation components
+- FastAPI application endpoints and services
+- Utility functions and helpers
+
+Code quality is maintained through pre-commit hooks that run locally at commit time.
 
 ## Getting Started
 
@@ -121,9 +135,9 @@ The ETL (Extract, Transform, Load) pipeline is designed to collect, process and 
 data from the Grailed website. The pipeline is implemented using Apache Airflow and
 performs the following tasks:
 
-- **Extract**: Collect data from Grailed using the `GrailedScraper`.
-- **Transform**: Process and clean the collected data.
-- **Load**: Load the cleaned data into the target data storage.
+- **Extract**: Collect data from Grailed using the `GrailedScraper`
+- **Transform**: Process and clean the collected data
+- **Load**: Load the cleaned data into the target data storage
 
 Refer to the Airflow documentation for more details on managing and configuring DAGs.
 
@@ -247,17 +261,17 @@ For detailed experiment setup and results, visit the ML Experiments section in
 The **Streamlit App** allows users to explore the project's data analysis and prediction
 results interactively. It includes the following pages:
 
-- **Intro**: Overview of the project and personal insights into Grailed.
+- **Intro**: Overview of the project and personal insights into Grailed
 - **Data Collection**: Describes the scraping process, collected data, and the building
-  of the ETL pipeline (work in progress).
+  of the ETL pipeline (work in progress)
 - **EDA**: Explores the data through visualizations and statistics. Currently, the EDA
   page includes:
-  - **Numerical Features**: Sold price and photo count analysis.
-  - **Categorical Features**: Department, category, designer, size, and more.
-  - **Text Features**: Item name, description, and hashtags.
-  - **Images**: Planned for a future stage.
+  - **Numerical Features**: Sold price and photo count analysis
+  - **Categorical Features**: Department, category, designer, size, and more
+  - **Text Features**: Item name, description, and hashtags
+  - **Images**: Planned for a future stage
 - **ML Experiments**: Details the machine learning experiment setup, methodology, and
-  results.
+  results
 
 The app is deployed on the Streamlit Community Hub, and you can explore it
 [here](https://graildient-descent.streamlit.app).
@@ -265,7 +279,7 @@ The app is deployed on the Streamlit Community Hub, and you can explore it
 ## FastAPI Service
 
 The **FastAPI Service** provides real-time price predictions for Grailed listings
-through a RESTful API. The service includes:
+through a RESTful API.
 
 ### Key Endpoints
 
