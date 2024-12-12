@@ -15,9 +15,18 @@ class PredictionService:
         listing_data = self.scraper.get_listing_data(str(listing_url), sold=False)
 
         if "error" in listing_data:
+            error_details = []
+            error_details.append(f"Error type: {listing_data['error']}")
+
+            if "status_code" in listing_data:
+                error_details.append(f"Status code: {listing_data['status_code']}")
+
+            if "message" in listing_data:
+                error_details.append(f"Message: {listing_data['message']}")
+
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail=f"Failed to scrape listing: {listing_data['error']}",
+                detail=" | ".join(error_details),
             )
 
         listing_data_df = pd.DataFrame([listing_data])
