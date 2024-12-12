@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: graildient-descent-api
+    env: python
+    buildCommand: poetry install --without dev,streamlit
+    startCommand: poetry run uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_MODEL_PATH
+        sync: false
+      - key: AWS_REGION
+        value: ru-central1
+      - key: AWS_ENDPOINT_URL
+        value: https://storage.yandexcloud.net
