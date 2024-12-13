@@ -1,7 +1,10 @@
+from unittest.mock import create_autospec
+
 import numpy as np
 import pytest
 
 from api.services import PredictionService
+from data_collection.scraper import GrailedListingScraper
 
 
 # Shared test constants
@@ -50,13 +53,9 @@ def mock_model():
 
 @pytest.fixture
 def mock_scraper():
-    class MockScraper:
-        def get_listing_data(self, url, sold=False):
-            if "error" in url:
-                return {"error": "MockError", "message": "Mock error message"}
-            return VALID_LISTING_DATA
-
-    return MockScraper()
+    scraper = create_autospec(GrailedListingScraper)
+    scraper.get_listing_data.return_value = VALID_LISTING_DATA
+    return scraper
 
 
 @pytest.fixture
