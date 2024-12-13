@@ -272,6 +272,7 @@ results interactively. It includes the following pages:
   - **Images**: Planned for a future stage
 - **ML Experiments**: Details the machine learning experiment setup, methodology, and
   results
+- **Price Predictor**: Interactive form to get price predictions for Grailed listings
 
 The app is deployed on the Streamlit Community Hub, and you can explore it
 [here](https://graildient-descent.streamlit.app).
@@ -279,7 +280,7 @@ The app is deployed on the Streamlit Community Hub, and you can explore it
 ## FastAPI Service
 
 The **FastAPI Service** provides real-time price predictions for Grailed listings
-through a RESTful API.
+through a RESTful API. The service is integrated with the Streamlit frontend.
 
 ### Key Endpoints
 
@@ -307,7 +308,7 @@ S3_MODEL_PATH=your_model_path \
 2. **Start the service**:
 
 ```bash
-python3 api/main.py
+uvicorn api.main:app --host 0.0.0.0 --port 8000
 ```
 
 3. **Access the API documentation**:
@@ -335,11 +336,16 @@ The project has made significant progress:
     - Data collection process
     - EDA visualizations and insights
     - ML experiment results and methodology
+    - Interactive price prediction interface
   - Implemented FastAPI service for real-time predictions
+  - Integrated frontend and backend for seamless price predictions
+  - Added prediction history tracking
 
 ### Next Steps
 
-- Add price prediction functionality to Streamlit app using FastAPI backend
+- Enhance prediction interface with:
+  - Price range estimates
+  - More detailed prediction explanations
 - Complete image feature analysis and integration
 - Explore deep learning approaches for potential improvements
 
