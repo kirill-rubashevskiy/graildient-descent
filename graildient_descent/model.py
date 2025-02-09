@@ -98,17 +98,10 @@ class Model(BaseEstimator, TransformerMixin):
         """
         if from_s3:
             # Fetch AWS S3 credentials from environment variables
-            AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-            AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
             AWS_REGION = os.getenv("AWS_REGION", "ru-central1")  # Default region
             AWS_ENDPOINT_URL = os.getenv(
                 "AWS_ENDPOINT_URL", "https://storage.yandexcloud.net"
             )
-
-            if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY:
-                raise EnvironmentError(
-                    "AWS credentials not found in environment variables."
-                )
 
             if not bucket_name:
                 raise ValueError("Bucket name must be provided when using S3.")
@@ -116,11 +109,12 @@ class Model(BaseEstimator, TransformerMixin):
             # Load model from S3 bucket
             s3 = boto3.client(
                 "s3",
-                aws_access_key_id=AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                aws_access_key_id="",
+                aws_secret_access_key="",
                 region_name=AWS_REGION,
                 endpoint_url=AWS_ENDPOINT_URL,
             )
+            s3._request_signer.sign = lambda *args, **kwargs: None
             try:
                 response = s3.get_object(Bucket=bucket_name, Key=path)
                 return joblib.load(BytesIO(response["Body"].read()))

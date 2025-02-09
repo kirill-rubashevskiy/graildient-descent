@@ -300,9 +300,7 @@ through a RESTful API. The service is integrated with the Streamlit frontend.
 
 ```bash
 export PYTHONPATH=. \
-AWS_ACCESS_KEY_ID=your_aws_access_key_id \
-AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key \
-S3_MODEL_PATH=your_model_path \
+S3_MODEL_PATH=your_model_path
 ```
 
 2. **Start the service**:
