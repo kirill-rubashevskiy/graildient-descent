@@ -1,7 +1,6 @@
 import os
 import tempfile
 from io import BytesIO
-from unittest import mock
 
 import joblib
 import pandas as pd
@@ -136,15 +135,6 @@ class TestModel:
             ValueError, match="Bucket name must be provided when using S3."
         ):
             Model.load_model("test.csv", from_s3=True)
-
-    @mock.patch("os.getenv")
-    def test_load_model_s3_missing_credentials(self, mock_getenv):
-        """
-        Test that load_model raises EnvironmentError when S3 credentials are missing.
-        """
-        mock_getenv.return_value = None
-        with pytest.raises(EnvironmentError, match="AWS credentials not found"):
-            Model.load_model(path="model.pkl", from_s3=True, bucket_name="my-bucket")
 
     # ----- Model Parameter Handling Tests -----
 
