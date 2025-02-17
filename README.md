@@ -315,6 +315,34 @@ uvicorn api.main:app --host 0.0.0.0 --port 8000
 
 </details>
 
+### Building and Running with Docker
+
+<details>
+
+1. **Build the image**:
+
+```bash
+docker build -t graildient-descent-api .
+```
+
+2. **Run the container**:
+
+```bash
+docker run -d \
+  -p 8000:8000 \
+  -e S3_MODEL_PATH=benchmarks/catboost_v1.pkl \
+  --name graildient-descent-api \
+  graildient-descent-api
+```
+
+3. **Check API status**:
+
+```bash
+curl http://localhost:8000/api/health
+```
+
+</details>
+
 ## Project Status
 
 The project has made significant progress:
