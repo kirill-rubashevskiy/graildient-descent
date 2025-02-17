@@ -45,6 +45,10 @@ under development):
   - `utils.py`: Helper functions
   - `routes.py`: API endpoint definitions
   - `main.py`: Application entry point
+  - `logging/`: Request logging and analytics:
+    - `models.py`: Database models for request logging
+    - `logger.py`: Request logging functionality
+    - `middleware.py`: FastAPI middleware for automatic request logging
 - **tests/**: Contains unit tests for various project components
 
 ## Testing and CI/CD
@@ -280,7 +284,8 @@ The app is deployed on the Streamlit Community Hub, and you can explore it
 ## FastAPI Service
 
 The **FastAPI Service** provides real-time price predictions for Grailed listings
-through a RESTful API. The service is integrated with the Streamlit frontend.
+through a RESTful API. The service is integrated with the Streamlit frontend and
+PostgreSQL for monitoring and analytics.
 
 ### Key Endpoints
 
@@ -290,56 +295,40 @@ through a RESTful API. The service is integrated with the Streamlit frontend.
   features
 - **/api/v1/docs/options**: Get valid options for all categorical fields
 - **/api/v1/models/info**: Get information about the currently deployed model
+- **/api/stats**: Get API usage statistics
 - **/api/health**: Health check endpoint
 
-### Running the API Service
+### Running with Docker Compose
 
 <details>
 
-1. **Set up environment variables**:
+1. **Create .env file**:
 
-```bash
-export PYTHONPATH=. \
-S3_MODEL_PATH=your_model_path
+Create a .env file in the project root with the following variables:
+
+```python
+# AWS/S3 Configuration
+S3_MODEL_PATH=benchmarks/catboost_v1.pkl
+S3_MODELS_BUCKET=graildient-models
+
+# Database Configuration
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
+POSTGRES_DB=graildient_stats
+DATABASE_URL=postgresql://user:password@db:5432/graildient_stats
 ```
 
-2. **Start the service**:
+2. **Build and start services**:
 
 ```bash
-uvicorn api.main:app --host 0.0.0.0 --port 8000
+docker compose up --build
 ```
 
-3. **Access the API documentation**:
-   - Swagger UI: http://localhost:8000/docs
-   - ReDoc: http://localhost:8000/redoc
+3. **Access the services**:
 
-</details>
-
-### Building and Running with Docker
-
-<details>
-
-1. **Build the image**:
-
-```bash
-docker build -t graildient-descent-api .
-```
-
-2. **Run the container**:
-
-```bash
-docker run -d \
-  -p 8000:8000 \
-  -e S3_MODEL_PATH=benchmarks/catboost_v1.pkl \
-  --name graildient-descent-api \
-  graildient-descent-api
-```
-
-3. **Check API status**:
-
-```bash
-curl http://localhost:8000/api/health
-```
+- API Documentation: http://localhost:8000/docs
+- API Health Check: http://localhost:8000/api/health
+- API Statistics: http://localhost:8000/api/stats
 
 </details>
 

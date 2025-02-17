@@ -9,7 +9,7 @@ RUN pip install poetry && \
 COPY pyproject.toml poetry.lock* /tmp/
 
 # Export only API and ML dependencies, excluding streamlit and scraper groups
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --with web --with scraper
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --with web --with scraper --with db
 
 
 # Stage 2: Build the API service
@@ -24,9 +24,10 @@ COPY /data_collection ./data_collection
 COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
 
 # Set environment variables
-ENV PYTHONPATH=/code
-ENV S3_MODEL_PATH=""
-ENV S3_MODELS_BUCKET="graildient-models"
+ENV PYTHONPATH=/code \
+    S3_MODEL_PATH="" \
+    S3_MODELS_BUCKET="graildient-models" \
+    DATABASE_URL=""
 
 # Install dependencies
 RUN apt-get update && \

@@ -4,6 +4,7 @@ from datetime import datetime
 from fastapi import FastAPI
 
 from api.config import S3_MODEL_PATH, S3_MODELS_BUCKET, logger
+from api.logging.middleware import setup_request_logging
 from api.routers import router
 from api.services import PredictionService
 from data_collection.scraper import GrailedListingScraper
@@ -38,6 +39,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+# Set up logging
+setup_request_logging(app)
 
 # Include routers
 app.include_router(router)
