@@ -1,0 +1,46 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    #    volumes:
+    #      - ./:/code:ro
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - S3_MODEL_PATH=${S3_MODEL_PATH}
+      - S3_MODELS_BUCKET=${S3_MODELS_BUCKET}
+    networks:
+      - graildient-network
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    #      expose:
+    #        - 5432
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=graildient_stats
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    networks:
+      - graildient-network
+
+volumes:
+  postgres_data:
+
+networks:
+  graildient-network:
+    driver: bridge
