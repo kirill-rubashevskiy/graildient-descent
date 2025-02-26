@@ -45,10 +45,11 @@ under development):
   - `utils.py`: Helper functions
   - `routes.py`: API endpoint definitions
   - `main.py`: Application entry point
-  - `logging/`: Request logging and analytics:
-    - `models.py`: Database models for request logging
-    - `logger.py`: Request logging functionality
-    - `middleware.py`: FastAPI middleware for automatic request logging
+  - `logging/`: Request logging and analytics: - `models.py`: Database models for
+    request logging - `logger.py`: Request logging functionality - `middleware.py`:
+    FastAPI middleware for automatic request logging **celery_tasks/**: Handles
+    distributed task processing:
+  - `worker.py`: Celery app configuration and prediction tasks
 - **tests/**: Contains unit tests for various project components
 
 ## Testing and CI/CD
@@ -281,22 +282,28 @@ results interactively. It includes the following pages:
 The app is deployed on the Streamlit Community Hub, and you can explore it
 [here](https://graildient-descent.streamlit.app).
 
-## FastAPI Service
+The **FastAPI Service** provides asynchronous price predictions for Grailed listings
+through a distributed task processing system. The service is integrated with Celery and
+RabbitMQ for handling prediction requests.
 
-The **FastAPI Service** provides real-time price predictions for Grailed listings
-through a RESTful API. The service is integrated with the Streamlit frontend and
-PostgreSQL for monitoring and analytics.
+### Architecture
+
+- **FastAPI Service**: Handles HTTP requests and submits prediction tasks
+- **Celery Worker**: Processes prediction tasks in the background with ML models
+- **RabbitMQ**: Message broker for distributing tasks
+- **PostgreSQL**: Stores request logs and usage statistics
 
 ### Key Endpoints
 
-- **/api/v1/predictions/url**: Predict price for an existing Grailed listing using its
-  URL
-- **/api/v1/predictions/form**: Predict price for a new listing based on provided
-  features
-- **/api/v1/docs/options**: Get valid options for all categorical fields
-- **/api/v1/models/info**: Get information about the currently deployed model
-- **/api/stats**: Get API usage statistics
-- **/api/health**: Health check endpoint
+- **POST /api/v1/predictions/form/submit**: Submit a form-based prediction task
+- **POST /api/v1/predictions/url/submit**: Submit a URL-based prediction task
+- **GET /api/v1/predictions/{task_id}**: Get prediction results
+- **GET /api/v1/tasks/{task_id}/status**: Check task status
+- **GET /api/v1/docs/options**: Get valid options for all categorical fields
+- **GET /api/v1/models/info**: Get information about the deployed model architecture
+  (under construction)
+- **GET /api/stats**: Get API usage statistics
+- **GET /api/health**: Health check endpoint
 
 ### Running with Docker Compose
 
@@ -327,6 +334,7 @@ docker compose up --build
 3. **Access the services**:
 
 - API Documentation: http://localhost:8000/docs
+- RabbitMQ Management: http://localhost:15672 (guest/guest)
 - API Health Check: http://localhost:8000/api/health
 - API Statistics: http://localhost:8000/api/stats
 
@@ -355,6 +363,8 @@ The project has made significant progress:
   - Implemented FastAPI service for real-time predictions
   - Integrated frontend and backend for seamless price predictions
   - Added prediction history tracking
+  - Implemented distributed task processing with Celery and RabbitMQ
+  - Added asynchronous API endpoints for handling prediction requests
 
 ### Next Steps
 

@@ -266,3 +266,11 @@ class PredictionResponse(BaseModel):
     prediction_id: str
     predicted_price: float
     metadata: dict[str, Any]
+
+
+class PredictionTask(BaseModel):
+    """Response model for task submission"""
+
+    task_id: str
+    status: str
+    submitted_at: Optional[str] = None
