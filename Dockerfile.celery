@@ -9,7 +9,7 @@ RUN pip install poetry && \
 COPY pyproject.toml poetry.lock* /tmp/
 
 # Export only the necessary dependencies for ML and Celery
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --with web --with scraper
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --with api --with celery --with ml --with scraper
 
 # Stage 2: Build the Celery worker
 FROM python:3.11-slim
@@ -19,8 +19,6 @@ WORKDIR /code
 # Copy modules needed for ML tasks
 COPY /graildient_descent ./graildient_descent
 COPY /data_collection ./data_collection
-COPY /api/config.py ./api/config.py
-COPY /api/services.py ./api/services.py
 COPY /celery_tasks ./celery_tasks
 COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
 
@@ -36,7 +34,6 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc && \
     pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir --upgrade -r requirements.txt && \
-    pip install --no-cache-dir celery && \
     apt-get remove -y gcc && \
     apt-get autoremove -y && \
     apt-get clean && \

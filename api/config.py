@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 # Constants
 S3_MODEL_PATH = os.getenv("S3_MODEL_PATH")
 S3_MODELS_BUCKET = "graildient-models"
-TEXT_COLS = ["item_name", "description", "hashtags"]
 
 # Database configuration
 DATABASE_URL = os.getenv("DATABASE_URL")

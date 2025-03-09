@@ -3,7 +3,9 @@ import streamlit as st
 
 
 @st.cache_data
-def display_text_features(data, text_stats, text_ngrams, text_sentiment, q_low, q_high):
+def display_text_features(
+    data, text_stats, text_tokens, text_ngrams, text_sentiment, q_low, q_high
+):
     text_features = ["item_name", "description", "hashtags"]
     stats = ["word_count", "char_count", "avg_word_length"]
     ngrams = ["unigrams", "bigrams", "trigrams"]
@@ -36,8 +38,6 @@ def display_text_features(data, text_stats, text_ngrams, text_sentiment, q_low, 
     """
     )
 
-    # Text Statistics Section
-
     st.write(
         """
     *Note*: For this section, text data was preprocessed. This included
@@ -48,6 +48,7 @@ def display_text_features(data, text_stats, text_ngrams, text_sentiment, q_low, 
     """
     )
 
+    # Text Statistics Section
     st.header("Text Statistics")
 
     st.write(
@@ -125,6 +126,20 @@ def display_text_features(data, text_stats, text_ngrams, text_sentiment, q_low, 
     price might indicate that buyers prefer more descriptive titles and hashtags.
     """
     )
+
+    st.header("Unique Tokens")
+
+    chart = (
+        alt.Chart(text_tokens)
+        .mark_rect()
+        .encode(
+            x=alt.X("feature1:N").axis(title="Text Feature"),
+            y=alt.Y("feature2:N").axis(title="Text Feature", labelAngle=0),
+            color="intersection_count:Q",
+        )
+    )
+
+    st.altair_chart(chart, use_container_width=True)
 
     # N-grams Section
     st.header("N-grams")

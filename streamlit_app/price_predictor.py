@@ -1,7 +1,9 @@
+import time
+
 import requests
 import streamlit as st
 from modules.config import (
-    API_ENDPOINT_URL,
+    API_BASE_URL,
     categories,
     conditions,
     departments,
@@ -73,16 +75,57 @@ def validate_hashtags(hashtags: str):
 def get_prediction(listing_data: dict) -> dict:
     """Handle API prediction request with error handling."""
     try:
-        response = requests.post(API_ENDPOINT_URL, json=listing_data)
-        if response.status_code == 200:
-            return response.json()
-        elif response.status_code == 422:
-            st.error("Validation Error: " + str(response.json()["detail"]))
-        else:
-            st.error(f"Server Error ({response.status_code})")
+        # Step 1: Submit the prediction task
+        submit_response = requests.post(
+            f"{API_BASE_URL}/api/v1/predictions/form/submit", json=listing_data
+        )
+
+        if submit_response.status_code != 200:
+            if submit_response.status_code == 422:
+                st.error("Validation Error: " + str(submit_response.json()["detail"]))
+            else:
+                st.error(f"Server Error ({submit_response.status_code})")
+            return None
+
+        # Get the task ID
+        task_id = submit_response.json().get("task_id")
+        if not task_id:
+            st.error("No task ID received from server")
+            return None
+
+        # Poll for the result (with a progress bar)
+        with st.spinner("Estimating price..."):
+            max_retries = 30  # Maximum number of retries (30 seconds)
+            for _ in range(max_retries):
+                time.sleep(1)  # Wait 1 second between checks
+
+                status_response = requests.get(
+                    f"{API_BASE_URL}/api/v1/tasks/{task_id}/status"
+                )
+                if status_response.status_code != 200:
+                    continue
+
+                status_data = status_response.json()
+                if status_data["ready"]:
+                    # Task is ready, get the result
+                    result_response = requests.get(
+                        f"{API_BASE_URL}/api/v1/predictions/{task_id}"
+                    )
+                    if result_response.status_code == 200:
+                        return result_response.json()
+                    else:
+                        st.error(
+                            f"Error retrieving prediction: {result_response.status_code}"
+                        )
+                        return None
+
+            # If we get here, the task took too long
+            st.error("Prediction timed out. Please try again.")
+            return None
+
     except requests.RequestException as e:
         st.error(f"Connection Error: {str(e)}")
-    return None
+        return None
 
 
 def update_prediction_history(prediction: dict, listing_data: dict):
@@ -178,17 +221,21 @@ with st.container(border=True):
     if st.button("Predict", use_container_width=True):
         listing_data = submit_listing_form()
         if listing_data:
-            with st.spinner("Estimating price..."):
-                prediction = get_prediction(listing_data)
-                if prediction:
+            prediction = get_prediction(listing_data)
+            if prediction:
+                # Make sure to check if the required keys exist
+                if "predicted_price" in prediction:
                     st.success(f"Predicted Price: ${prediction['predicted_price']:.0f}")
+                else:
+                    st.error("Received incomplete prediction data from server")
+                    st.write("Received data:", prediction)
 
 
 # Add price history tracking
 if "predictions" not in st.session_state:
     st.session_state.predictions = []
 
-if prediction:
+if prediction and "predicted_price" in prediction:
     update_prediction_history(prediction, listing_data)
 
 # Show prediction history
