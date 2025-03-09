@@ -8,17 +8,15 @@ from modules.eda_tabular_features.numerical_features import display_numerical_fe
 from modules.eda_text_features import display_text_features
 
 
-data = load_data_from_s3("grailed", "data/raw/sold_listings.csv", nrows=10000)
-text_stats = load_data_from_s3(
-    "grailed", "data/preprocessed/preprocessed_text_stats_10k.csv"
+data = load_data_from_s3("data/raw/sold_listings.csv", nrows=10000)
+text_stats = load_data_from_s3("data/preprocessed/preprocessed_text_stats_10k.csv")
+text_tokens = text_ngrams = load_data_from_s3(
+    "data/preprocessed/token_intersection_long_10k.csv"
 )
-text_ngrams = load_data_from_s3(
-    "grailed", "data/preprocessed/preprocessed_text_ngrams_10k.csv"
-)
+text_ngrams = load_data_from_s3("data/preprocessed/preprocessed_text_ngrams_10k.csv")
 text_sentiment = load_data_from_s3(
-    "grailed", "data/preprocessed/preprocessed_text_sentiment_10k.csv"
+    "data/preprocessed/preprocessed_text_sentiment_10k.csv"
 )
-
 q_low, q_high = calculate_quantiles(data, [0.25, 0.75])
 
 st.title("Exploratory Data Analysis")
@@ -39,7 +37,9 @@ with tab1:  # Tabular Features
 
 with tab2:  # Text Features
 
-    display_text_features(data, text_stats, text_ngrams, text_sentiment, q_low, q_high)
+    display_text_features(
+        data, text_stats, text_tokens, text_ngrams, text_sentiment, q_low, q_high
+    )
 
 with tab3:  # Image Features
 

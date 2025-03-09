@@ -1,7 +1,7 @@
 import pandas as pd
 from fastapi import HTTPException, status
 
-from api.config import TEXT_COLS
+from celery_tasks.config import TEXT_COLS
 from graildient_descent.preprocessing import preprocess_text
 
 

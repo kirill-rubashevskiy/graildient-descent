@@ -4,7 +4,7 @@ from datetime import datetime
 
 from celery import Celery, signals
 
-from api.services import PredictionService
+from celery_tasks.services import PredictionService
 from data_collection.scraper import GrailedListingScraper
 from graildient_descent.model import Model
 

@@ -1,4 +1,4 @@
-import streamlit as st
+import os
 
 
 def generate_size_range(start: int, end: int) -> list[str]:
@@ -6,7 +6,27 @@ def generate_size_range(start: int, end: int) -> list[str]:
     return [str(i) for i in range(start, end + 1)]
 
 
-API_ENDPOINT_URL = f"{st.secrets.api.base_url}{st.secrets.api.predictions_form}"
+# AWS/S3 Configuration
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+AWS_REGION = os.getenv("AWS_REGION", "ru-central1")
+AWS_ENDPOINT_URL = os.getenv("AWS_ENDPOINT_URL", "https://storage.yandexcloud.net")
+
+# S3 Data
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME", "grailed")
+S3_DATA_PATH = os.getenv("S3_DATA_PATH", "data/splits/25k")
+
+# WANDB Configuration
+WANDB_ENTITY = os.getenv("WANDB_ENTITY", "kirill-rubashevskiy")
+WANDB_PROJECT = os.getenv("WANDB_PROJECT", "graildient-descent")
+
+# API Configuration
+API_BASE_URL = os.getenv("API_BASE_URL", "http://api:8000")
+API_PREDICTIONS_FORM = os.getenv(
+    "API_PREDICTIONS_FORM", "/api/v1/predictions/form/submit"
+)
+API_PREDICTIONS_URL = os.getenv("API_PREDICTIONS_URL", "/api/v1/predictions/url/submit")
+API_ENDPOINT_URL = f"{API_BASE_URL}{API_PREDICTIONS_FORM}"
 
 departments = ["menswear", "womenswear"]
 
