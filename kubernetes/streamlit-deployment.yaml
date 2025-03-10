@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamlit
+  namespace: graildient-descent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamlit
+  template:
+    metadata:
+      labels:
+        app: streamlit
+    spec:
+      containers:
+        - name: streamlit
+          image: graildient-descent-streamlit:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            [
+              "streamlit",
+              "run",
+              "streamlit_app/app.py",
+              "--server.port=8501",
+              "--server.address=0.0.0.0",
+            ]
+          ports:
+            - containerPort: 8501
+          env:
+            - name: PYTHONPATH
+              value: "/code"
+            - name: AWS_ACCESS_KEY_ID
+              value: ""
+            - name: AWS_SECRET_ACCESS_KEY
+              value: ""
+            - name: API_BASE_URL
+              value: "http://api:8000"
+            - name: API_ENDPOINT_URL
+              value: "http://api:8000/api/v1/predictions/form"
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8501
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8501
+            initialDelaySeconds: 45
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamlit
+  namespace: graildient-descent
+spec:
+  selector:
+    app: streamlit
+  ports:
+    - port: 8501
+      targetPort: 8501
+  type: ClusterIP

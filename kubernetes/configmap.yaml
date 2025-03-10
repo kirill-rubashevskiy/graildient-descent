@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: graildient-descent-config
+  namespace: graildient-descent
+data:
+  S3_MODEL_PATH: "benchmarks/catboost_v1.pkl"
+  S3_MODELS_BUCKET: "graildient-models"
+  AWS_REGION: "ru-central1"
+  AWS_ENDPOINT_URL: "https://storage.yandexcloud.net"
+  DATABASE_URL: "postgresql://user:password@postgres:5432/graildient_stats"
+  CELERY_BROKER_URL: "amqp://guest:guest@rabbitmq:5672//"
+  CELERY_RESULT_BACKEND: "rpc://"
