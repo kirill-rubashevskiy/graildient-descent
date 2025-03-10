@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: graildient-descent
+
+resources:
+  - namespace.yaml
+  - postgres-deployment.yaml
+  - rabbitmq-deployment.yaml
+  - api-deployment.yaml
+  - celery-deployment.yaml
+  - streamlit-deployment.yaml
+  - nginx-deployment.yaml
+  - configmap.yaml

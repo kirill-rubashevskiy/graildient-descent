@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-worker
+  namespace: graildient-descent
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: celery-worker
+  template:
+    metadata:
+      labels:
+        app: celery-worker
+    spec:
+      containers:
+        - name: celery-worker
+          image: graildient-descent-celery:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            [
+              "celery",
+              "-A",
+              "celery_tasks.worker",
+              "worker",
+              "--loglevel=info",
+              "--concurrency=2",
+            ]
+          env:
+            - name: PYTHONPATH
+              value: "/code"
+            - name: S3_MODEL_PATH
+              value: "benchmarks/catboost_v1.pkl"
+            - name: S3_MODELS_BUCKET
+              value: "graildient-models"
+            - name: AWS_REGION
+              value: "ru-central1"
+            - name: AWS_ENDPOINT_URL
+              value: "https://storage.yandexcloud.net"
+            - name: AWS_ACCESS_KEY_ID
+              value: ""
+            - name: AWS_SECRET_ACCESS_KEY
+              value: ""
+            - name: CELERY_BROKER_URL
+              value: "amqp://guest:guest@rabbitmq:5672//"
+            - name: CELERY_RESULT_BACKEND
+              value: "rpc://"
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
