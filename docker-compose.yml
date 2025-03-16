@@ -10,6 +10,7 @@ services:
     depends_on:
       - api
       - streamlit
+      - flower
     networks:
       - graildient-network
 
@@ -86,6 +87,24 @@ services:
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - CELERY_RESULT_BACKEND=rpc://
     command: celery -A celery_tasks.worker worker --loglevel=info --concurrency=2
+    networks:
+      - graildient-network
+
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "5555:5555"
+    environment:
+      - S3_MODEL_PATH=${S3_MODEL_PATH}
+      - S3_MODELS_BUCKET=${S3_MODELS_BUCKET}
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=rpc://
+    command: celery -A celery_tasks.worker flower --port=5555
     networks:
       - graildient-network
 

@@ -46,6 +46,9 @@ kubectl apply -f api-deployment.yaml
 echo "Deploying Celery worker..."
 kubectl apply -f celery-deployment.yaml
 
+echo "Deploying Celery Flower..."
+kubectl apply -f celery-flower-deployment.yaml
+
 echo "Deploying Streamlit frontend..."
 kubectl apply -f streamlit-deployment.yaml
 
@@ -53,6 +56,11 @@ kubectl apply -f streamlit-deployment.yaml
 echo "Waiting for API to be ready..."
 kubectl wait --namespace graildient-descent \
   --for=condition=available deployment/api \
+  --timeout=300s
+
+echo "Waiting for Celery Flower to be ready..."
+kubectl wait --namespace graildient-descent \
+  --for=condition=available deployment/celery-flower \
   --timeout=300s
 
 echo "Waiting for Streamlit to be ready..."
@@ -77,7 +85,9 @@ echo "======================================="
 echo "You can access your application using:"
 echo "API: $NGINX_URL"
 echo "Streamlit: $NGINX_URL (add host header: app.graildient-descent.local)"
+echo "Flower: $NGINX_URL (add host header: flower.graildient-descent.local)"
 echo "======================================="
 echo "For local testing, add these entries to your /etc/hosts file:"
 echo "$(minikube ip) api.graildient-descent.local"
 echo "$(minikube ip) app.graildient-descent.local"
+echo "$(minikube ip) flower.graildient-descent.local"

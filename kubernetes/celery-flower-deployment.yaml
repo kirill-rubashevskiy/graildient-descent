@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-flower
+  namespace: graildient-descent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-flower
+  template:
+    metadata:
+      labels:
+        app: celery-flower
+    spec:
+      containers:
+        - name: celery-flower
+          image: graildient-descent-celery:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            [
+              "celery",
+              "-A",
+              "celery_tasks.worker",
+              "flower",
+              "--port=5555",
+              "--broker=amqp://guest:guest@rabbitmq:5672//",
+            ]
+          ports:
+            - containerPort: 5555
+          env:
+            - name: PYTHONPATH
+              value: "/code"
+            - name: S3_MODEL_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: S3_MODEL_PATH
+            - name: S3_MODELS_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: S3_MODELS_BUCKET
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: AWS_REGION
+            - name: AWS_ENDPOINT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: AWS_ENDPOINT_URL
+            - name: CELERY_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: CELERY_BROKER_URL
+            - name: CELERY_RESULT_BACKEND
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: CELERY_RESULT_BACKEND
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5555
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5555
+            initialDelaySeconds: 45
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: celery-flower
+  namespace: graildient-descent
+spec:
+  selector:
+    app: celery-flower
+  ports:
+    - port: 5555
+      targetPort: 5555
+  type: ClusterIP
