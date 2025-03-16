@@ -54,6 +54,7 @@ datasets = "^3.2.0"
 
 [tool.poetry.group.celery.dependencies]
 celery = "^5.4.0"
+flower = "^2.0.1"
 
 [tool.coverage.run]
 source = ["graildient_descent", "tests", "data_collection", "api"]

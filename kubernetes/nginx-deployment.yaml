@@ -112,53 +112,18 @@ data:
                 add_header Cache-Control "public, max-age=86400";
             }
         }
+
+        # Celery Flower UI
+        server {
+            listen 80;
+            server_name flower.graildient-descent.local;
+
+            location / {
+                proxy_pass http://celery-flower:5555;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+            }
+        }
     }
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx
-  namespace: graildient-descent
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-        - name: nginx
-          image: nginx:alpine
-          ports:
-            - containerPort: 80
-          volumeMounts:
-            - name: nginx-config
-              mountPath: /etc/nginx/nginx.conf
-              subPath: nginx.conf
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "100m"
-            requests:
-              memory: "64Mi"
-              cpu: "50m"
-      volumes:
-        - name: nginx-config
-          configMap:
-            name: nginx-config
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx
-  namespace: graildient-descent
-spec:
-  selector:
-    app: nginx
-  ports:
-    - port: 80
-      targetPort: 80
-  type: NodePort

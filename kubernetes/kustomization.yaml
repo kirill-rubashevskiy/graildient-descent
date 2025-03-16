@@ -9,6 +9,7 @@ resources:
   - rabbitmq-deployment.yaml
   - api-deployment.yaml
   - celery-deployment.yaml
+  - celery-flower-deployment.yaml
   - streamlit-deployment.yaml
   - nginx-deployment.yaml
   - configmap.yaml
