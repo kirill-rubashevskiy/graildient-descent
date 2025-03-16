@@ -32,38 +32,49 @@ spec:
             - containerPort: 8000
           env:
             - name: DATABASE_URL
-              value: "postgresql://user:password@postgres:5432/graildient_stats"
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: DATABASE_URL
             - name: S3_MODEL_PATH
-              value: "benchmarks/catboost_v1.pkl"
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: S3_MODEL_PATH
             - name: S3_MODELS_BUCKET
-              value: "graildient-models"
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: S3_MODELS_BUCKET
             - name: AWS_REGION
-              value: "ru-central1"
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: AWS_REGION
             - name: AWS_ENDPOINT_URL
-              value: "https://storage.yandexcloud.net"
-            - name: AWS_ACCESS_KEY_ID
-              value: ""
-            - name: AWS_SECRET_ACCESS_KEY
-              value: ""
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: AWS_ENDPOINT_URL
           resources:
             limits:
-              memory: "2Gi" # Increase from 1Gi to 2Gi
+              memory: "2Gi"
               cpu: "500m"
             requests:
-              memory: "1Gi" # Increase from 512Mi to 1Gi
+              memory: "1Gi"
               cpu: "250m"
           readinessProbe:
             httpGet:
               path: /api/health
               port: 8000
-            initialDelaySeconds: 90
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
           livenessProbe:
             httpGet:
               path: /api/health
               port: 8000
-            initialDelaySeconds: 120
+            initialDelaySeconds: 60
             periodSeconds: 20
             timeoutSeconds: 5
 ---
@@ -78,4 +89,5 @@ spec:
   ports:
     - port: 8000
       targetPort: 8000
-  type: ClusterIP
+      nodePort: 30000
+  type: NodePort

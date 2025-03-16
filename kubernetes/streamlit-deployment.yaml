@@ -31,13 +31,19 @@ spec:
             - name: PYTHONPATH
               value: "/code"
             - name: AWS_ACCESS_KEY_ID
-              value: ""
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: AWS_ACCESS_KEY_ID
+                  optional: true
             - name: AWS_SECRET_ACCESS_KEY
-              value: ""
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: AWS_SECRET_ACCESS_KEY
+                  optional: true
             - name: API_BASE_URL
               value: "http://api:8000"
-            - name: API_ENDPOINT_URL
-              value: "http://api:8000/api/v1/predictions/form"
           resources:
             limits:
               memory: "512Mi"
@@ -70,4 +76,5 @@ spec:
   ports:
     - port: 8501
       targetPort: 8501
-  type: ClusterIP
+      nodePort: 30001
+  type: NodePort

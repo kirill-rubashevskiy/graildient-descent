@@ -15,52 +15,19 @@ spec:
     spec:
       containers:
         - name: celery-flower
-          image: graildient-descent-celery:latest
-          imagePullPolicy: IfNotPresent
-          command:
-            [
-              "celery",
-              "-A",
-              "celery_tasks.worker",
-              "flower",
-              "--port=5555",
-              "--broker=amqp://guest:guest@rabbitmq:5672//",
-            ]
+          image: mher/flower
           ports:
             - containerPort: 5555
           env:
-            - name: PYTHONPATH
-              value: "/code"
-            - name: S3_MODEL_PATH
-              valueFrom:
-                configMapKeyRef:
-                  name: graildient-descent-config
-                  key: S3_MODEL_PATH
-            - name: S3_MODELS_BUCKET
-              valueFrom:
-                configMapKeyRef:
-                  name: graildient-descent-config
-                  key: S3_MODELS_BUCKET
-            - name: AWS_REGION
-              valueFrom:
-                configMapKeyRef:
-                  name: graildient-descent-config
-                  key: AWS_REGION
-            - name: AWS_ENDPOINT_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: graildient-descent-config
-                  key: AWS_ENDPOINT_URL
+            - name: FLOWER_PORT
+              value: "5555"
             - name: CELERY_BROKER_URL
               valueFrom:
                 configMapKeyRef:
                   name: graildient-descent-config
                   key: CELERY_BROKER_URL
-            - name: CELERY_RESULT_BACKEND
-              valueFrom:
-                configMapKeyRef:
-                  name: graildient-descent-config
-                  key: CELERY_RESULT_BACKEND
+            - name: FLOWER_URL_PREFIX
+              value: ""
           resources:
             limits:
               memory: "256Mi"
@@ -93,4 +60,5 @@ spec:
   ports:
     - port: 5555
       targetPort: 5555
-  type: ClusterIP
+      nodePort: 30002
+  type: NodePort

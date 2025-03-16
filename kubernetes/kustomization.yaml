@@ -5,11 +5,10 @@ namespace: graildient-descent
 
 resources:
   - namespace.yaml
+  - configmap.yaml
   - postgres-deployment.yaml
   - rabbitmq-deployment.yaml
   - api-deployment.yaml
   - celery-deployment.yaml
   - celery-flower-deployment.yaml
   - streamlit-deployment.yaml
-  - nginx-deployment.yaml
-  - configmap.yaml

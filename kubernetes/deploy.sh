@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# This script deploys the Graildient Descent application to Minikube
+# This script deploys the Graildient Descent application to Docker Desktop Kubernetes
 
 set -e
 
-# Ensure Minikube is running
-if ! minikube status > /dev/null 2>&1; then
-    echo "Minikube is not running. Starting..."
-    minikube start
+# Check if Kubernetes is running in Docker Desktop
+if ! kubectl cluster-info &> /dev/null; then
+    echo "Kubernetes is not running. Please enable Kubernetes in Docker Desktop."
+    exit 1
 fi
 
 # Create namespace if it doesn't exist
@@ -17,9 +17,6 @@ kubectl apply -f namespace.yaml
 # Apply ConfigMap
 echo "Applying ConfigMap..."
 kubectl apply -f configmap.yaml
-
-# Not using Secrets for this deployment
-echo "Skipping Secrets for the initial deployment."
 
 # Apply infrastructure services first
 echo "Deploying PostgreSQL..."
@@ -68,26 +65,11 @@ kubectl wait --namespace graildient-descent \
   --for=condition=available deployment/streamlit \
   --timeout=300s
 
-# Deploy NGINX last
-echo "Deploying NGINX..."
-kubectl apply -f nginx-deployment.yaml
-
-# Get the NGINX NodePort URL
-echo "Waiting for NGINX to be ready..."
-kubectl wait --namespace graildient-descent \
-  --for=condition=available deployment/nginx \
-  --timeout=300s
-
-NGINX_URL=$(minikube service nginx -n graildient-descent --url)
-
 echo "Deployment complete!"
 echo "======================================="
 echo "You can access your application using:"
-echo "API: $NGINX_URL"
-echo "Streamlit: $NGINX_URL (add host header: app.graildient-descent.local)"
-echo "Flower: $NGINX_URL (add host header: flower.graildient-descent.local)"
+echo "API: http://localhost:30000/api"
+echo "API Docs: http://localhost:30000/docs"
+echo "Streamlit: http://localhost:30001"
+echo "Celery Flower: http://localhost:30002"
 echo "======================================="
-echo "For local testing, add these entries to your /etc/hosts file:"
-echo "$(minikube ip) api.graildient-descent.local"
-echo "$(minikube ip) app.graildient-descent.local"
-echo "$(minikube ip) flower.graildient-descent.local"
