@@ -30,21 +30,45 @@ spec:
             - name: PYTHONPATH
               value: "/code"
             - name: S3_MODEL_PATH
-              value: "benchmarks/catboost_v1.pkl"
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: S3_MODEL_PATH
             - name: S3_MODELS_BUCKET
-              value: "graildient-models"
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: S3_MODELS_BUCKET
             - name: AWS_REGION
-              value: "ru-central1"
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: AWS_REGION
             - name: AWS_ENDPOINT_URL
-              value: "https://storage.yandexcloud.net"
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: AWS_ENDPOINT_URL
             - name: AWS_ACCESS_KEY_ID
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: AWS_ACCESS_KEY_ID
             - name: AWS_SECRET_ACCESS_KEY
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: AWS_SECRET_ACCESS_KEY
             - name: CELERY_BROKER_URL
-              value: "amqp://guest:guest@rabbitmq:5672//"
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: CELERY_BROKER_URL
             - name: CELERY_RESULT_BACKEND
-              value: "rpc://"
+              valueFrom:
+                configMapKeyRef:
+                  name: graildient-descent-config
+                  key: CELERY_RESULT_BACKEND
           resources:
             limits:
               memory: "1Gi"

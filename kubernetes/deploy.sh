@@ -6,7 +6,7 @@ set -e
 
 # Check if Kubernetes is running in Docker Desktop
 if ! kubectl cluster-info &> /dev/null; then
-    echo "Kubernetes is not running. Please enable Kubernetes in Docker Desktop."
+    echo "Kubernetes is not running. Please enable Kubernetes."
     exit 1
 fi
 
@@ -17,6 +17,9 @@ kubectl apply -f namespace.yaml
 # Apply ConfigMap
 echo "Applying ConfigMap..."
 kubectl apply -f configmap.yaml
+
+echo "Applying Secrets..."
+kubectl apply -f secrets.yaml
 
 # Apply infrastructure services first
 echo "Deploying PostgreSQL..."

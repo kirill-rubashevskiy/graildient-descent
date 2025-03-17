@@ -6,6 +6,7 @@ namespace: graildient-descent
 resources:
   - namespace.yaml
   - configmap.yaml
+  - secrets.yaml
   - postgres-deployment.yaml
   - rabbitmq-deployment.yaml
   - api-deployment.yaml
