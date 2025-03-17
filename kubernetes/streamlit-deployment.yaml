@@ -32,16 +32,14 @@ spec:
               value: "/code"
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
-                configMapKeyRef:
-                  name: graildient-descent-config
+                secretKeyRef:
+                  name: aws-credentials
                   key: AWS_ACCESS_KEY_ID
-                  optional: true
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
-                configMapKeyRef:
-                  name: graildient-descent-config
+                secretKeyRef:
+                  name: aws-credentials
                   key: AWS_SECRET_ACCESS_KEY
-                  optional: true
             - name: API_BASE_URL
               value: "http://api:8000"
           resources:
