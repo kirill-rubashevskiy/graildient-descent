@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# This script deploys the Graildient Descent application to Docker Desktop Kubernetes
+# This script deploys the complete Graildient Descent application to Kubernetes
 
 set -e
 
-# Check if Kubernetes is running in Docker Desktop
+# Check if Kubernetes is running
 if ! kubectl cluster-info &> /dev/null; then
-    echo "Kubernetes is not running. Please enable Kubernetes."
+    echo "Kubernetes is not running. Please ensure your Kubernetes cluster is accessible."
     exit 1
 fi
 
@@ -14,7 +14,22 @@ fi
 echo "Creating namespace..."
 kubectl apply -f namespace.yaml
 
-# Apply ConfigMap
+# Check if NGINX Ingress Controller is already installed
+if kubectl get ns ingress-nginx &> /dev/null; then
+    echo "NGINX Ingress Controller is already installed."
+else
+    echo "Installing NGINX Ingress Controller..."
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
+
+    # Wait for the Ingress controller to be ready
+    echo "Waiting for NGINX Ingress Controller to be ready..."
+    kubectl wait --namespace ingress-nginx \
+      --for=condition=ready pod \
+      --selector=app.kubernetes.io/component=controller \
+      --timeout=120s || true
+fi
+
+# Apply ConfigMap and Secrets
 echo "Applying ConfigMap..."
 kubectl apply -f configmap.yaml
 
@@ -27,17 +42,6 @@ kubectl apply -f postgres-deployment.yaml
 
 echo "Deploying RabbitMQ..."
 kubectl apply -f rabbitmq-deployment.yaml
-
-# Wait for infrastructure to be ready
-echo "Waiting for PostgreSQL to be ready..."
-kubectl wait --namespace graildient-descent \
-  --for=condition=available deployment/postgres \
-  --timeout=300s
-
-echo "Waiting for RabbitMQ to be ready..."
-kubectl wait --namespace graildient-descent \
-  --for=condition=available deployment/rabbitmq \
-  --timeout=300s
 
 # Apply application deployments
 echo "Deploying API service..."
@@ -52,27 +56,32 @@ kubectl apply -f celery-flower-deployment.yaml
 echo "Deploying Streamlit frontend..."
 kubectl apply -f streamlit-deployment.yaml
 
-# Wait for application services to be ready
-echo "Waiting for API to be ready..."
-kubectl wait --namespace graildient-descent \
-  --for=condition=available deployment/api \
-  --timeout=300s
+# Wait a bit for pods to be created
+echo "Waiting for pods to be created..."
+sleep 10
 
-echo "Waiting for Celery Flower to be ready..."
-kubectl wait --namespace graildient-descent \
-  --for=condition=available deployment/celery-flower \
-  --timeout=300s
+# Apply the Ingress resource
+echo "Applying Ingress resource..."
+kubectl apply -f ingress.yaml
 
-echo "Waiting for Streamlit to be ready..."
-kubectl wait --namespace graildient-descent \
-  --for=condition=available deployment/streamlit \
-  --timeout=300s
+# Add hosts entry for local development if it doesn't exist
+if ! grep -q "graildient.local" /etc/hosts; then
+    echo "Adding graildient.local to /etc/hosts file..."
+    echo "Would you like to add 'graildient.local' to your /etc/hosts file? (y/n)"
+    read -r response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo "127.0.0.1 graildient.local" | sudo tee -a /etc/hosts
+        echo "Entry added successfully!"
+    else
+        echo "Manual action needed: Add '127.0.0.1 graildient.local' to your /etc/hosts file."
+    fi
+fi
 
-echo "Deployment complete!"
+echo "Deployment completed!"
 echo "======================================="
-echo "You can access your application using:"
-echo "API: http://localhost:30000/api"
-echo "API Docs: http://localhost:30000/docs"
-echo "Streamlit: http://localhost:30001"
-echo "Celery Flower: http://localhost:30002"
+echo "You can access your application at:"
+echo "API: http://graildient.local/api"
+echo "API Docs: http://graildient.local/docs"
+echo "Streamlit: http://graildient.local/"
+echo "Celery Flower: http://graildient.local/flower"
 echo "======================================="

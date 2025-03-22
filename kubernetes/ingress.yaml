@@ -1,0 +1,79 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: graildient-descent-ingress
+  namespace: graildient-descent
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/sort-backends: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: graildient.local
+      http:
+        paths:
+          - path: /api/
+            pathType: Exact
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8000
+
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8000
+
+          - path: /docs
+            pathType: Exact
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8000
+
+          - path: /flower
+            pathType: Prefix
+            backend:
+              service:
+                name: celery-flower
+                port:
+                  number: 5555
+
+          - path: /app
+            pathType: Prefix
+            backend:
+              service:
+                name: streamlit
+                port:
+                  number: 8501
+
+          - path: /static
+            pathType: Prefix
+            backend:
+              service:
+                name: streamlit
+                port:
+                  number: 8501
+
+          - path: /_stcore
+            pathType: Prefix
+            backend:
+              service:
+                name: streamlit
+                port:
+                  number: 8501
+
+          - path: /
+            pathType: Exact
+            backend:
+              service:
+                name: streamlit
+                port:
+                  number: 8501

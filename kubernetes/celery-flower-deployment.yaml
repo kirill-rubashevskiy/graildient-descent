@@ -27,7 +27,7 @@ spec:
                   name: graildient-descent-config
                   key: CELERY_BROKER_URL
             - name: FLOWER_URL_PREFIX
-              value: ""
+              value: "flower"
           resources:
             limits:
               memory: "256Mi"
@@ -36,17 +36,14 @@ spec:
               memory: "128Mi"
               cpu: "100m"
           readinessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 5555
-            initialDelaySeconds: 30
+            initialDelaySeconds: 5
             periodSeconds: 10
-            timeoutSeconds: 5
           livenessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 5555
-            initialDelaySeconds: 45
+            initialDelaySeconds: 15
             periodSeconds: 20
 ---
 apiVersion: v1
@@ -60,5 +57,4 @@ spec:
   ports:
     - port: 5555
       targetPort: 5555
-      nodePort: 30002
-  type: NodePort
+  type: ClusterIP

@@ -13,3 +13,4 @@ resources:
   - celery-deployment.yaml
   - celery-flower-deployment.yaml
   - streamlit-deployment.yaml
+  - ingress.yaml
