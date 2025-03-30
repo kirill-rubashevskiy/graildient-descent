@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from api.logging.middleware import setup_request_logging
 from api.routers import router
@@ -11,6 +12,9 @@ app = FastAPI(
     description="API for predicting Grailed listing prices",
     version="1.0.0",
 )
+
+# Set up Prometheus monitoring
+Instrumentator().instrument(app).expose(app, endpoint="/api/metrics")
 
 # Set up logging
 setup_request_logging(app)
