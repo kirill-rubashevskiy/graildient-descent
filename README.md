@@ -10,9 +10,6 @@ high-end, pre-owned, and limited edition fashion. The project aims to build a
 comprehensive pipeline that includes data collection, preprocessing, model training, and
 deployment.
 
-You can explore the project’s interactive results on the
-[Streamlit app](https://graildient-descent.streamlit.app).
-
 ### Multimodal Data
 
 This project works with multimodal data:
@@ -41,15 +38,21 @@ under development):
 - **api/**: FastAPI application for real-time price predictions, including:
   - `models.py`: Pydantic models and enums for data validation
   - `config.py`: Configuration settings and constants
-  - `services.py`: Business logic for predictions
   - `utils.py`: Helper functions
   - `routes.py`: API endpoint definitions
   - `main.py`: Application entry point
-  - `logging/`: Request logging and analytics: - `models.py`: Database models for
-    request logging - `logger.py`: Request logging functionality - `middleware.py`:
-    FastAPI middleware for automatic request logging **celery_tasks/**: Handles
-    distributed task processing:
+  - `logging/`: Request logging and analytics:
+    - `models.py`: Database models for request logging
+    - `logger.py`: Request logging functionality
+    - `middleware.py`: FastAPI middleware for automatic request logging
+- **celery_tasks/**: Handles distributed task processing:
   - `worker.py`: Celery app configuration and prediction tasks
+  - `config.py`: Configuration settings and constants
+  - `services.py`: Business logic for predictions
+- **kubernetes/**: Kubernetes deployment configurations:
+  - Deployment files for all services (API, Streamlit, RabbitMQ, etc.)
+  - Monitoring stack with Prometheus and Grafana
+  - Service definitions and ingress rules
 - **tests/**: Contains unit tests for various project components
 
 ## Testing and CI/CD
@@ -292,6 +295,7 @@ RabbitMQ for handling prediction requests.
 - **Celery Worker**: Processes prediction tasks in the background with ML models
 - **RabbitMQ**: Message broker for distributing tasks
 - **PostgreSQL**: Stores request logs and usage statistics
+- **Prometheus & Grafana**: Monitoring and visualization of system metrics
 
 ### Key Endpoints
 
@@ -304,6 +308,7 @@ RabbitMQ for handling prediction requests.
   (under construction)
 - **GET /api/stats**: Get API usage statistics
 - **GET /api/health**: Health check endpoint
+- **GET /api/metrics**: Prometheus metrics for monitoring
 
 ### Running with Docker Compose
 
@@ -337,6 +342,34 @@ docker compose up --build
 - RabbitMQ Management: http://localhost:15672 (guest/guest)
 - API Health Check: http://localhost:8000/api/health
 - API Statistics: http://localhost:8000/api/stats
+
+</details>
+
+### Kubernetes Deployment
+
+The project is fully containerized and configured for Kubernetes deployment, making it
+easy to scale and manage in production environments.
+
+<details>
+
+1. **Build Docker Images**:
+
+```bash
+cd kubernetes
+./build-images.sh
+```
+
+2. **Deploy the Application**:
+
+```bash
+./deploy.sh
+```
+
+3. **Deploy Monitoring Stack**:
+
+```bash
+./deploy-monitoring.sh
+```
 
 </details>
 

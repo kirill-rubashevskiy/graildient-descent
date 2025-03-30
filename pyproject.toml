@@ -25,6 +25,7 @@ pytest-cov = "^6.0.0"
 
 [tool.poetry.group.api.dependencies]
 fastapi = {extras = ["standard"], version = "^0.112.1"}
+prometheus-fastapi-instrumentator = "^7.1.0"
 
 [tool.poetry.group.scraper.dependencies]
 selenium = "^4.22.0"

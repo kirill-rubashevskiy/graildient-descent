@@ -14,6 +14,14 @@ spec:
     - host: graildient.local
       http:
         paths:
+          - path: /openapi.json
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8000
+
           - path: /api/
             pathType: Exact
             backend:

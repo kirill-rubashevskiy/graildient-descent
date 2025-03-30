@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  namespace: graildient-descent
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: graildient.local
+      http:
+        paths:
+          - path: /prometheus
+            pathType: Exact
+            backend:
+              service:
+                name: prometheus
+                port:
+                  number: 9090
+
+          - path: /prometheus/
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus
+                port:
+                  number: 9090
+
+          - path: /grafana
+            pathType: Exact
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+
+          - path: /grafana/
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000

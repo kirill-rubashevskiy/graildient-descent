@@ -14,3 +14,11 @@ resources:
   - celery-flower-deployment.yaml
   - streamlit-deployment.yaml
   - ingress.yaml
+  - prometheus-config.yaml
+  - prometheus-deployment.yaml
+  - node-exporter.yaml
+  - rabbitmq-exporter.yaml
+  - postgres-exporter.yaml
+  - grafana-deployment.yaml
+  - grafana-datasources.yaml
+  - monitoring-ingress.yaml
